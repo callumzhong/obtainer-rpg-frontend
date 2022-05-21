@@ -1,61 +1,35 @@
-import React from 'react';
-import HomeCanvas from './components/HomeCanvas';
+import { useEffect } from 'react';
 import Camera from './layouts/Camera';
-import HomeSprite from './models/homeSprite';
-import PlayerSprite from './models/playerSprite';
+import HomePage from './pages/Home';
 
-const playerImage = new Image();
-playerImage.src = require('./assets/Heavy_Knight_Non-Combat_Animations.png');
-const homeImage = new Image();
-homeImage.src = require('./assets/home.png');
+const actions = {
+	w: 'top',
+	a: 'left',
+	s: 'down',
+	d: 'right',
+};
 
+const animations = [];
 const App = () => {
-	const homeBackgroundSprite = new HomeSprite({
-		image: homeImage,
-		position: {
-			x: 0,
-			y: 0,
-		},
-	});
-	const homePlayerSprite = new PlayerSprite({
-		image: playerImage,
-		box: {
-			w: 4,
-			h: 31,
-		},
-		position: {
-			x: 0,
-			y: -20,
-		},
-	});
+	useEffect(() => {
+		window.addEventListener('keydown', (e) => {
+			const action = actions[e.key];
+			if (action && animations.indexOf(action) === -1) {
+				animations.unshift(action);
+			}
+		});
+		window.addEventListener('keyup', (e) => {
+			const action = actions[e.key];
+			const index = animations.indexOf(action);
+			if (index > -1) {
+				animations.splice(index, 1);
+			}
+		});
+	}, []);
 
-	window.addEventListener('keydown', (e) => {
-		switch (e.key) {
-			case 'w':
-				homePlayerSprite.top();
-				// homeBackgroundSprite.down();
-				break;
-			case 'a':
-				homePlayerSprite.left();
-				// homeBackgroundSprite.right();
-				break;
-			case 's':
-				homePlayerSprite.down();
-				// homeBackgroundSprite.top();
-				break;
-			case 'd':
-				homePlayerSprite.right();
-				// homeBackgroundSprite.left();
-				break;
-			default:
-		}
-	});
 	return (
 		<Camera>
-			<HomeCanvas
-				backgroundSprite={homeBackgroundSprite}
-				playerSprite={homePlayerSprite}
-			/>
+			<HomePage animations={animations} />
 		</Camera>
 	);
 };

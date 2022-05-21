@@ -3,21 +3,36 @@ import Sprite from './sprite';
 class HomeSprite extends Sprite {
 	constructor(params) {
 		super(params);
-		this.name = 'backgroundSprite';
+		this.name = 'homeSprite';
+		this.sx += this.position.x;
+		this.sy += this.position.y;
 	}
 
 	draw(ctx, ref) {
 		ctx.drawImage(
 			this.image,
-			0 + this.position.x,
-			20 + this.position.y,
+			this.sx,
+			this.sy,
 			ref.current.width,
 			ref.current.height,
-			0,
-			0,
+			this.dx,
+			this.dy,
 			ref.current.width,
 			ref.current.height,
 		);
+	}
+
+	left() {
+		this.position.x -= 3;
+	}
+	right() {
+		this.position.x += 3;
+	}
+	top() {
+		this.position.y -= 3;
+	}
+	down() {
+		this.position.y += 3;
 	}
 }
 
