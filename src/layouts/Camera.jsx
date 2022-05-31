@@ -1,9 +1,10 @@
+import styles from './Camera.module.css';
 const Camera = (props) => {
-	let height = `${window.innerHeight}px`;
 	return (
-		<div className='bg-white' style={{ height: height }}>
-			{props.children}
-		</div>
+		<div
+			className={`${styles.camera} outline outline-1 outline-white`}
+			children={props.children}
+		/>
 	);
 };
 

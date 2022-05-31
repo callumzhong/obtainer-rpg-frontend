@@ -1,15 +1,33 @@
 import PropTypes from 'prop-types';
-import React, { useEffect } from 'react';
-const Canvas = React.forwardRef(({ draw, ...props }, ref) => {
-	useEffect(() => {
-		const context = ref.current.getContext('2d');
-		draw(context);
-	}, [draw, ref]);
+import React, { useImperativeHandle, useRef } from 'react';
+import styles from './Canvas.module.css';
+const Canvas = React.forwardRef((props, ref) => {
+	const canvasRef = useRef();
+	useImperativeHandle(ref, () => ({
+		draw: (draw) => {
+			const animation = () => {
+				const ctx = canvasRef.current.getContext('2d');
+				draw(ctx);
+				requestAnimationFrame(animation);
+			};
+			animation();
+		},
+	}));
 
-	return <canvas height={960} width={1160} ref={ref} {...props} />;
+	return (
+		<canvas
+			className={styles.canvas}
+			height={props.height}
+			width={props.width}
+			ref={canvasRef}
+		/>
+	);
 });
 
 Canvas.propTypes = {
-	draw: PropTypes.func.isRequired,
+	props: PropTypes.exact({
+		height: PropTypes.number.isRequired,
+		width: PropTypes.number.isRequired,
+	}),
 };
 export default Canvas;
