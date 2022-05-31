@@ -7,8 +7,8 @@ const Canvas = React.forwardRef((props, ref) => {
 		draw: (draw) => {
 			const animation = () => {
 				const ctx = canvasRef.current.getContext('2d');
+				ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
 				draw(ctx);
-				requestAnimationFrame(animation);
 			};
 			animation();
 		},
