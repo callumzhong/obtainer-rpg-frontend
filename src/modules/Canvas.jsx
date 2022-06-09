@@ -5,12 +5,9 @@ const Canvas = React.forwardRef((props, ref) => {
 	const canvasRef = useRef();
 	useImperativeHandle(ref, () => ({
 		draw: (draw) => {
-			const animation = () => {
-				const ctx = canvasRef.current.getContext('2d');
-				ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-				draw(ctx);
-			};
-			animation();
+			const ctx = canvasRef.current.getContext('2d');
+			ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+			draw(ctx);
 		},
 	}));
 
