@@ -1,8 +1,8 @@
-import { useEffect } from 'react';
 import blacksmithLowerImage from '../assets/blacksmithLower.png';
 import hero1Image from '../assets/hero1_16.png';
 import GameCanvas from '../components/GameCanvas';
 import BLACKSMITH_BOUNDARIES from '../data/blacksmithBoundaries';
+import useRequestAnimationFrame from '../hooks/useRequestAnimationFrame';
 import Camera from '../layouts/Camera';
 import OverworldMap from '../scripts/OverworldMap';
 import Person from '../scripts/Person';
@@ -25,22 +25,15 @@ const map = new OverworldMap({
 });
 
 const BlacksmithPage = ({ directions, isKeyDown }) => {
-	useEffect(() => {
-		const timer = requestAnimationFrame(function animate() {
-			// update all objects
-			Object.values(map.gameObjects).forEach((object) => {
-				object.update({
-					arrow: directions[0],
-					map: map,
-				});
+	useRequestAnimationFrame((time) => {
+		// update all objects
+		Object.values(map.gameObjects).forEach((object) => {
+			object.update({
+				arrow: directions[0],
+				map: map,
 			});
-			requestAnimationFrame(animate);
 		});
-		return () => {
-			console.log('clean!');
-			cancelAnimationFrame(timer);
-		};
-	}, [directions]);
+	});
 
 	return (
 		<Camera>
