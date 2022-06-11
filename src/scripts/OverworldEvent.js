@@ -1,3 +1,5 @@
+import oppositeDirection from '../utils/oppositeDirection';
+
 class OverworldEvent {
 	constructor({ map, event }) {
 		this.map = map;
@@ -50,9 +52,24 @@ class OverworldEvent {
 		document.addEventListener('PersonWalkingComplete', completeHandler);
 	}
 
-	init() {
+	textMessage(resolve, callback) {
+		if (this.event.faceHero) {
+			const obj = this.map.gameObjects[this.event.faceHero];
+			obj.direction = oppositeDirection(this.map.gameObjects['hero'].direction);
+		}
+		callback({
+			type: 'textMessage',
+			content: this.event.text,
+			onComplete: (setState) => {
+				setState({});
+				return resolve();
+			},
+		});
+	}
+
+	init(callback) {
 		return new Promise((resolve) => {
-			this[this.event.type](resolve);
+			this[this.event.type](resolve, callback);
 		});
 	}
 }
