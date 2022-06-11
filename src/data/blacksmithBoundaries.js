@@ -1,4 +1,4 @@
-import asGridCoord from '../utils/asGridCoords';
+import asGridCoord from '../scripts/calc/asGridCoords';
 
 const BLACKSMITH_BOUNDARIES = [
 	{
@@ -254,7 +254,5 @@ const BLACKSMITH_BOUNDARIES = [
 	obj[grid] = true;
 	return obj;
 }, {});
-
-Object.freeze(BLACKSMITH_BOUNDARIES);
 
 export default BLACKSMITH_BOUNDARIES;
