@@ -1,12 +1,32 @@
-import { curry } from 'ramda';
+import { curry, ifElse } from 'ramda';
 import startBehavior from './update/startBehavior';
 import updatePosition from './update/updatePosition';
 import updateSprite from './update/updateSprite';
 
-const updatePerson = curry(
+const stillMoving = ({
+	gameObject: { x, y, movingProgressRemaining, ...gameObjectOtherArgs },
+	walls,
+}) => {
+	const state = {
+		gameObject: {
+			x,
+			y,
+			movingProgressRemaining,
+			...gameObjectOtherArgs,
+		},
+		walls,
+	};
+	const updated = updatePosition(state.gameObject);
+	state.gameObject.x = updated.x;
+	state.gameObject.y = updated.y;
+	state.gameObject.movingProgressRemaining = updated.movingProgressRemaining;
+	return state;
+};
+
+const changeMoveDirection = curry(
 	(
-		setEventState,
-		updatedLayer,
+		isCutscenePlaying,
+		arrow,
 		{
 			gameObject: {
 				x,
@@ -20,8 +40,7 @@ const updatePerson = curry(
 				movingProgressRemaining,
 				...gameObjectOtherArgs
 			},
-			walls,
-			arrow,
+			walls: { ...walls },
 		},
 	) => {
 		const state = {
@@ -37,26 +56,12 @@ const updatePerson = curry(
 				},
 				movingProgressRemaining,
 			},
-			walls: { ...walls },
+			walls: walls,
 		};
-		if (state.gameObject.movingProgressRemaining > 0) {
-			const { x, y, movingProgressRemaining } = updatePosition(setEventState)(
-				state.gameObject,
-			);
-			state.gameObject.x = x;
-			state.gameObject.y = y;
-			state.gameObject.movingProgressRemaining = movingProgressRemaining;
-			return state;
-		}
 
-		if (
-			!updatedLayer.isCutscenePlaying &&
-			state.gameObject.isPlayerControlled &&
-			arrow
-		) {
+		if (!isCutscenePlaying && state.gameObject.isPlayerControlled && arrow) {
 			const { gameObject: updatedGameObject, walls: updatedWalls } =
 				startBehavior(
-					setEventState,
 					{
 						type: 'walk',
 						direction: arrow,
@@ -66,9 +71,35 @@ const updatePerson = curry(
 			state.gameObject = updatedGameObject;
 			state.walls = updatedWalls;
 		}
+		if (state.gameObject.id === 'npc1') {
+			// console.log(state.gameObject.direction);
+		}
 		state.gameObject.sprite = updateSprite(state.gameObject);
 		return state;
 	},
 );
+
+const isMoving = ({ gameObject }) => {
+	return gameObject.movingProgressRemaining > 0;
+};
+
+const updatePerson = (isCutscenePlaying, arrow, { gameObjects, walls }) =>
+	Object.keys(gameObjects).reduce(
+		(obj, key) => {
+			const _ = ifElse(
+				isMoving,
+				stillMoving,
+				changeMoveDirection(isCutscenePlaying, arrow),
+			)({ gameObject: obj.gameObjects[key], walls: obj.walls });
+
+			obj.gameObjects[key] = _.gameObject;
+			obj.walls = _.walls;
+			return obj;
+		},
+		{
+			gameObjects: gameObjects,
+			walls: { ...walls },
+		},
+	);
 
 export default updatePerson;

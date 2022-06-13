@@ -1,29 +1,28 @@
 import { compose, curry } from 'ramda';
+import emitter, { eventName } from '../../utils/emitter';
 import isSpaceTaken from '../calc/isSpaceTaken';
 import moveWall from './moveWall';
 import updateSprite from './updateSprite';
-const standBehavior = curry(
-	(setEventState, behavior, { gameObject, walls }) => {
-		const state = {
-			gameObject: {
-				...gameObject,
-				isStanding: gameObject.isStanding,
-			},
-			walls,
-		};
-		if (behavior.type === 'stand') {
-			state.gameObject.isStanding = true;
-			setTimeout(() => {
-				setEventState({
-					type: 'PersonStandComplete',
-					whoId: state.gameObject.id,
-				});
-				state.gameObject.isStanding = false;
-			}, behavior.time);
-		}
-		return state;
-	},
-);
+const standBehavior = curry((behavior, { gameObject, walls }) => {
+	const state = {
+		gameObject: {
+			...gameObject,
+			isStanding: gameObject.isStanding,
+		},
+		walls,
+	};
+	if (behavior.type === 'stand') {
+		state.gameObject.isStanding = true;
+		console.log(state);
+		setTimeout(() => {
+			emitter.emit(eventName.stand, {
+				whoId: state.gameObject.id,
+			});
+			state.gameObject.isStanding = false;
+		}, behavior.time);
+	}
+	return state;
+});
 
 const readyWalk = ({ gameObject, walls }) => {
 	const state = {
@@ -48,7 +47,7 @@ const readyWalk = ({ gameObject, walls }) => {
 	return state;
 };
 
-const walkBehavior = curry((callback, setEventState, behavior, state) => {
+const walkBehavior = curry((callback, behavior, state) => {
 	if (behavior.type === 'walk') {
 		if (
 			isSpaceTaken(
@@ -60,7 +59,7 @@ const walkBehavior = curry((callback, setEventState, behavior, state) => {
 		) {
 			behavior.retry &&
 				setTimeout(() => {
-					callback(setEventState, behavior, state);
+					callback(behavior, state);
 				}, 10);
 			return state;
 		}
@@ -79,10 +78,10 @@ const updateDirection = curry((behavior, { gameObject, walls }) => {
 	};
 });
 
-const startBehavior = (setEvent, behavior, { gameObject, walls }) =>
+const startBehavior = (behavior, { gameObject, walls }) =>
 	compose(
-		standBehavior(setEvent, behavior),
-		walkBehavior(startBehavior, setEvent, behavior),
+		standBehavior(behavior),
+		walkBehavior(startBehavior, behavior),
 		updateDirection(behavior),
 	)({ gameObject, walls });
 
