@@ -17,14 +17,32 @@ const layer = new LayerMap({
 	gameObjects: {
 		hero: new Person({
 			x: withGrid(12),
-			y: withGrid(8),
+			y: withGrid(6),
 			isPlayerControlled: true,
+		}),
+		npc1: new Person({
+			x: withGrid(3),
+			y: withGrid(6),
+			behaviorLoop: [
+				// { type: 'walk', direction: 'up' },
+				// { type: 'walk', direction: 'down' },
+				{ type: 'stand', direction: 'left', time: 800 },
+				{ type: 'stand', direction: 'up', time: 800 },
+				{ type: 'stand', direction: 'right', time: 1200 },
+				{ type: 'stand', direction: 'up', time: 300 },
+			],
 		}),
 	},
 });
 
 Object.freeze(layer);
-const updatedLayer = {};
+const updatedLayer = {
+	gameObjects: {},
+	walls: {},
+	isCutscenePlaying: false,
+	cutsceneSpaces: {},
+};
+
 let isMounted = false;
 const BlacksmithPage = () => {
 	const [layerImageState, setLayerImageState] = useState(
@@ -34,46 +52,40 @@ const BlacksmithPage = () => {
 				hero: {
 					imageSrc: hero1Image,
 				},
+				npc1: {
+					imageSrc: hero1Image,
+				},
 			},
 		}),
 	);
 	const [eventState, setEventState] = useState({});
 	const directions = useKeyPressListener({});
 	const updateHandler = useCallback(
-		(state) => updatePerson(setEventState, updatedLayer)(state),
-		[],
-	);
-	const animateHandler = useCallback(
 		(time) => {
 			if (!isMounted) return;
-			let { gameObjects, walls } = updatedLayer;
-			// update all objects;
-			Object.values(gameObjects).forEach((object) => {
-				const { gameObject: updatedGameObject, walls: updatedWalls } =
-					updateHandler({
-						arrow: directions[0],
-						gameObject: object,
-						walls: walls,
-					});
-				gameObjects[updatedGameObject.id] = updatedGameObject;
-				walls = updatedWalls;
-			});
+			let { gameObjects, walls, isCutscenePlaying } = updatedLayer;
+			const { walls: updatedWalls, gameObjects: updatedGameObjects } =
+				updatePerson(isCutscenePlaying, directions[0], {
+					gameObjects,
+					walls,
+				});
+			gameObjects = updatedGameObjects;
+			walls = updatedWalls;
 		},
-		[directions, updateHandler],
+		[directions],
 	);
-	useRequestAnimationFrame(animateHandler);
+	useRequestAnimationFrame(updateHandler);
 
 	useEffect(() => {
 		if (isMounted === true) return;
-		const deepObj = clone(layer);
-		updatedLayer.walls = deepObj.walls;
-		updatedLayer.gameObjects = deepObj.gameObjects;
-		updatedLayer.cutsceneSpaces = deepObj.cutsceneSpaces;
-		updatedLayer.isCutscenePlaying = deepObj.isCutscenePlaying;
+		const deepLayer = clone(layer);
+		Object.keys(updatedLayer).forEach(
+			(key) => (updatedLayer[key] = deepLayer[key]),
+		);
 
 		// build ID
 		Object.keys(updatedLayer.gameObjects).forEach((key) => {
-			let object = updatedLayer.gameObjects[key];
+			const object = updatedLayer.gameObjects[key];
 			object.id = key;
 		});
 		isMounted = true;
@@ -83,14 +95,9 @@ const BlacksmithPage = () => {
 	}, []);
 
 	return (
-		<>
-			<Camera>
-				<GameCanvas layer={updatedLayer} layerImage={layerImageState} />
-			</Camera>
-			{/* {event.type === 'textMessage' && (
-				<Conversation content={event.content} onComplete={event.onComplete} />
-			)} */}
-		</>
+		<Camera>
+			<GameCanvas layer={updatedLayer} layerImage={layerImageState} />
+		</Camera>
 	);
 };
 
