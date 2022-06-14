@@ -1,6 +1,6 @@
 import emitter, { eventName } from '../../utils/emitter';
+import oppositeDirection from '../calc/oppositeDirection';
 import startBehavior from '../update/startBehavior';
-
 const eventBox = {
 	stand: (resolve, { sourceLayer, event }) => {
 		const state = {
@@ -52,13 +52,29 @@ const eventBox = {
 		};
 		emitter.on(eventName.walk, completeHandler);
 	},
-	textMessage: () => {},
+	textMessage: (resolve, { sourceLayer, event }) => {
+		if (event.faceHero) {
+			const obj = sourceLayer.gameObjects[event.faceHero];
+			obj.direction = oppositeDirection(
+				sourceLayer.gameObjects['hero'].direction,
+			);
+		}
+
+		event.setEventState({
+			type: 'textMessage',
+			text: event.text,
+			onComplete: () => {
+				resolve();
+				event.setEventState({});
+			},
+		});
+	},
 	changeMap: () => {},
 };
 /**
  * @param {object} sourceLayer 圖層資料 (依賴參考更新)
  */
-const allocateEvent = ({ sourceLayer, event }) =>
+const allocateEvent = (sourceLayer, event) =>
 	new Promise((resolve) => {
 		eventBox[event.type](resolve, { sourceLayer, event });
 	});
