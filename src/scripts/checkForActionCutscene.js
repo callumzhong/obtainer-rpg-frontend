@@ -10,8 +10,9 @@ const startCutscene = async (setEventState, sourceLayer, events) => {
 
 	sourceLayer.isCutscenePlaying = false;
 
-	//Reset NPCs to do their idle behavior
-	Object.values(this.gameObjects).forEach((object) => doBehaviorEvent(this));
+	Object.values(sourceLayer.gameObjects).forEach((object) => {
+		doBehaviorEvent(sourceLayer, object);
+	});
 };
 
 const checkForActionCutscene = (setEventState, sourceLayer) => {

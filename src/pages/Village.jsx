@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
-import blacksmithLowerImage from '../assets/blacksmithLower.png';
 import hero1Image from '../assets/hero1_16.png';
+import plaqueImage from '../assets/plaque.png';
+import villageImage from '../assets/village.png';
 import Conversation from '../components/Conversation/Conversation';
 import GameCanvas from '../components/GameCanvas';
-import BLACKSMITH_BOUNDARIES from '../data/blacksmithBoundaries';
+import VILLAGE_BOUNDARIES from '../data/villageBoundaries';
 import useKeyPressDirectionListener from '../hooks/useKeyPressDirectionListener';
 import useKeyPressDownListener from '../hooks/useKeyPressDownListener';
 import useRequestAnimationFrame from '../hooks/useRequestAnimationFrame';
@@ -16,13 +17,33 @@ import checkForActionCutscene from '../scripts/checkForActionCutscene';
 import mountEventLoop from '../scripts/mountEventLoop';
 import addWall from '../scripts/update/addWall';
 import updatePerson from '../scripts/updatePerson';
+const layerImage = new LayerImage({
+	lowerSrc: villageImage,
+	uppers: {
+		plaque: {
+			imageSrc: plaqueImage,
+			x: withGrid(36),
+			y: withGrid(20),
+		},
+	},
+	gameObjects: {
+		hero: {
+			imageSrc: hero1Image,
+		},
+		npc1: {
+			imageSrc: hero1Image,
+		},
+	},
+});
 
 const layer = new LayerMap({
-	walls: { ...BLACKSMITH_BOUNDARIES },
+	walls: {
+		...VILLAGE_BOUNDARIES,
+	},
 	gameObjects: {
 		hero: new Person({
-			x: withGrid(12),
-			y: withGrid(6),
+			x: withGrid(24),
+			y: withGrid(25),
 			isPlayerControlled: true,
 		}),
 		npc1: new Person({
@@ -43,20 +64,7 @@ const layer = new LayerMap({
 });
 
 let isMounted = false;
-const BlacksmithPage = () => {
-	const [layerImageState, setLayerImageState] = useState(
-		new LayerImage({
-			lowerSrc: blacksmithLowerImage,
-			gameObjects: {
-				hero: {
-					imageSrc: hero1Image,
-				},
-				npc1: {
-					imageSrc: hero1Image,
-				},
-			},
-		}),
-	);
+const VillagePage = () => {
 	const [eventState, setEventState] = useState({
 		type: '',
 		text: '',
@@ -100,11 +108,11 @@ const BlacksmithPage = () => {
 	return (
 		<>
 			<Camera>
-				<GameCanvas layer={layer} layerImage={layerImageState} />
+				<GameCanvas layer={layer} layerImage={layerImage} />
 			</Camera>
 			{eventState.type === 'textMessage' && <Conversation event={eventState} />}
 		</>
 	);
 };
 
-export default BlacksmithPage;
+export default VillagePage;
