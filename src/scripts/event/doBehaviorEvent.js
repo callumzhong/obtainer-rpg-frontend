@@ -1,46 +1,32 @@
-import { clone } from 'ramda';
 import allocateEvent from './allocateEvent';
-const doBehaviorEvent = async (
-	setEventState,
-	isCutscenePlaying,
-	layer,
-	gameObject,
-) => {
-	const state = {
-		gameObjects: clone(layer.gameObjects),
-		walls: { ...layer.walls },
-	};
-	let behaviorLoopIndex = gameObject.behaviorLoopIndex;
+
+/**
+ * @param {object} sourceLayer 圖層資料(需異動狀態)(依賴參考)
+ */
+const doBehaviorEvent = async (sourceLayer, gameObject) => {
 	if (
-		isCutscenePlaying ||
+		sourceLayer.isCutscenePlaying ||
 		gameObject.behaviorLoop.length === 0 ||
 		gameObject.isStanding
 	) {
-		return state;
+		return;
 	}
-
-	//Setting up our event with relevant info
-	let eventConfig = gameObject.behaviorLoop[behaviorLoopIndex];
+	let behaviorLoopIndex = gameObject.behaviorLoopIndex;
+	const eventConfig = gameObject.behaviorLoop[behaviorLoopIndex];
 	eventConfig.who = gameObject.id;
-
-	//Create an event instance out of our next event config
-	const updated = await allocateEvent(setEventState, {
-		state,
+	await allocateEvent({
+		sourceLayer,
 		event: eventConfig,
 	});
-	console.log(updated);
-	//Setting the next event to fire
+
 	behaviorLoopIndex += 1;
 	if (behaviorLoopIndex === gameObject.behaviorLoop.length) {
 		behaviorLoopIndex = 0;
 	}
-	return {
-		gameObject: {
-			behaviorLoopIndex,
-			...updated.gameObject,
-		},
-		walls: updated.walls,
-	};
+	sourceLayer.gameObjects[eventConfig.who].behaviorLoopIndex =
+		behaviorLoopIndex;
+
+	doBehaviorEvent(sourceLayer, sourceLayer.gameObjects[eventConfig.who]);
 };
 
 export default doBehaviorEvent;
