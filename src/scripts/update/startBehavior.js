@@ -3,6 +3,8 @@ import emitter, { eventName } from '../../utils/emitter';
 import isSpaceTaken from '../calc/isSpaceTaken';
 import moveWall from './moveWall';
 import updateSprite from './updateSprite';
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 const standBehavior = curry((behavior, { gameObject, walls }) => {
 	const state = {
 		gameObject: {
@@ -12,14 +14,13 @@ const standBehavior = curry((behavior, { gameObject, walls }) => {
 		walls,
 	};
 	if (behavior.type === 'stand') {
-		state.gameObject.isStanding = true;
-		console.log(state);
-		setTimeout(() => {
+		sleep(behavior.time).then((_) => {
+			state.gameObject.isStanding = true;
 			emitter.emit(eventName.stand, {
 				whoId: state.gameObject.id,
 			});
 			state.gameObject.isStanding = false;
-		}, behavior.time);
+		});
 	}
 	return state;
 });
@@ -34,10 +35,9 @@ const readyWalk = ({ gameObject, walls }) => {
 			...walls,
 		},
 	};
-
 	//Ready to walk!
 	state.walls = moveWall(
-		walls,
+		state.walls,
 		gameObject.x,
 		gameObject.y,
 		gameObject.direction,
@@ -58,12 +58,12 @@ const walkBehavior = curry((callback, behavior, state) => {
 			)
 		) {
 			behavior.retry &&
-				setTimeout(() => {
+				sleep(10).then((_) => {
 					callback(behavior, state);
-				}, 10);
+				});
 			return state;
 		}
-		state = readyWalk(state);
+		return readyWalk(state);
 	}
 	return state;
 });
