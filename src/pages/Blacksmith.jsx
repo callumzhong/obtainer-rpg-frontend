@@ -26,14 +26,15 @@ const layer = new LayerMap({
 			isPlayerControlled: true,
 		}),
 		npc1: new Person({
-			x: withGrid(3),
+			x: withGrid(15),
 			y: withGrid(6),
+			direction: 'up',
 			talking: [
 				{
 					events: [
 						{ type: 'textMessage', text: "I'm busy...", faceHero: 'npc1' },
 						{ type: 'textMessage', text: 'Go away!' },
-						{ who: 'hero', type: 'walk', direction: 'right' },
+						{ who: 'npc1', type: 'stand', direction: 'up', time: 200 },
 					],
 				},
 			],
