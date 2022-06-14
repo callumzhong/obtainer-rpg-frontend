@@ -1,19 +1,22 @@
-import { clone } from 'ramda';
 import { useCallback, useEffect, useState } from 'react';
 import blacksmithLowerImage from '../assets/blacksmithLower.png';
 import hero1Image from '../assets/hero1_16.png';
+import Conversation from '../components/Conversation/Conversation';
 import GameCanvas from '../components/GameCanvas';
 import BLACKSMITH_BOUNDARIES from '../data/blacksmithBoundaries';
-import useKeyPressListener from '../hooks/useKeyPressListener';
+import useKeyPressDirectionListener from '../hooks/useKeyPressDirectionListener';
+import useKeyPressDownListener from '../hooks/useKeyPressDownListener';
 import useRequestAnimationFrame from '../hooks/useRequestAnimationFrame';
 import Camera from '../layouts/Camera';
 import LayerImage from '../models/LayerImage';
 import LayerMap from '../models/LayerMap';
 import Person from '../models/Person';
 import withGrid from '../scripts/calc/withGrid';
-import doBehaviorEvent from '../scripts/event/doBehaviorEvent';
+import checkForActionCutscene from '../scripts/checkForActionCutscene';
+import mountEventLoop from '../scripts/mountEventLoop';
 import addWall from '../scripts/update/addWall';
 import updatePerson from '../scripts/updatePerson';
+
 const layer = new LayerMap({
 	walls: { ...BLACKSMITH_BOUNDARIES },
 	gameObjects: {
@@ -25,30 +28,18 @@ const layer = new LayerMap({
 		npc1: new Person({
 			x: withGrid(3),
 			y: withGrid(6),
-			behaviorLoop: [
-				{ type: 'walk', direction: 'up' },
-				{ type: 'walk', direction: 'left' },
-				{ type: 'walk', direction: 'down' },
-				{ type: 'stand', direction: 'down', time: 5000 },
-				{ type: 'walk', direction: 'right' },
+			talking: [
+				{
+					events: [
+						{ type: 'textMessage', text: "I'm busy...", faceHero: 'npc1' },
+						{ type: 'textMessage', text: 'Go away!' },
+						{ who: 'hero', type: 'walk', direction: 'right' },
+					],
+				},
 			],
 		}),
 	},
 });
-
-Object.freeze(layer);
-const updatedLayer = {
-	gameObjects: {},
-	walls: {},
-	isCutscenePlaying: false,
-	cutsceneSpaces: {},
-};
-
-const mountEventLoop = (layer, gameObject) => {
-	setTimeout(() => {
-		doBehaviorEvent(layer, gameObject);
-	}, 10);
-};
 
 let isMounted = false;
 const BlacksmithPage = () => {
@@ -65,48 +56,53 @@ const BlacksmithPage = () => {
 			},
 		}),
 	);
-	const directions = useKeyPressListener({});
+	const [eventState, setEventState] = useState({
+		type: '',
+		text: '',
+		onComplete: () => {},
+	});
+	const directions = useKeyPressDirectionListener();
 	const updateHandler = useCallback(
 		(time) => {
 			if (!isMounted) return;
-			let { gameObjects, walls, isCutscenePlaying } = updatedLayer;
+			let { gameObjects, walls, isCutscenePlaying } = layer;
 			const { walls: updatedWalls, gameObjects: updatedGameObjects } =
 				updatePerson(isCutscenePlaying, directions[0], {
 					gameObjects,
 					walls,
 				});
-			updatedLayer.gameObjects = updatedGameObjects;
-			updatedLayer.walls = updatedWalls;
+			layer.gameObjects = updatedGameObjects;
+			layer.walls = updatedWalls;
 		},
 		[directions],
 	);
+	useKeyPressDownListener('Enter', () => {
+		checkForActionCutscene(setEventState, layer);
+		if (eventState.type === 'textMessage') {
+			eventState.onComplete();
+		}
+	});
 	useRequestAnimationFrame(updateHandler);
 	useEffect(() => {
 		if (isMounted === true) return;
-		const deepLayer = clone(layer);
-		Object.keys(layer).reduce((obj, key) => {
-			obj[key] = deepLayer[key];
-			return obj;
-		}, updatedLayer);
 		// build ID
-		Object.keys(updatedLayer.gameObjects).forEach((key) => {
-			const object = updatedLayer.gameObjects[key];
+		Object.keys(layer.gameObjects).forEach((key) => {
+			const object = layer.gameObjects[key];
 			object.id = key;
-			updatedLayer.walls = addWall(
-				{ ...updatedLayer.walls },
-				object.x,
-				object.y,
-			);
-			mountEventLoop(updatedLayer, object);
+			layer.walls = addWall({ ...layer.walls }, object.x, object.y);
+			mountEventLoop(layer, object);
 		});
 
 		isMounted = true;
 	}, []);
 
 	return (
-		<Camera>
-			<GameCanvas layer={updatedLayer} layerImage={layerImageState} />
-		</Camera>
+		<>
+			<Camera>
+				<GameCanvas layer={layer} layerImage={layerImageState} />
+			</Camera>
+			{eventState.type === 'textMessage' && <Conversation event={eventState} />}
+		</>
 	);
 };
 

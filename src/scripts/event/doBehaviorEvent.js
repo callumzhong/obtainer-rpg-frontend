@@ -14,10 +14,7 @@ const doBehaviorEvent = async (sourceLayer, gameObject) => {
 	let behaviorLoopIndex = gameObject.behaviorLoopIndex;
 	const eventConfig = gameObject.behaviorLoop[behaviorLoopIndex];
 	eventConfig.who = gameObject.id;
-	await allocateEvent({
-		sourceLayer,
-		event: eventConfig,
-	});
+	await allocateEvent(sourceLayer, eventConfig);
 
 	behaviorLoopIndex += 1;
 	if (behaviorLoopIndex === gameObject.behaviorLoop.length) {
