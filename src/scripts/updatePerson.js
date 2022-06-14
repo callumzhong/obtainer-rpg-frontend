@@ -71,17 +71,12 @@ const changeMoveDirection = curry(
 			state.gameObject = updatedGameObject;
 			state.walls = updatedWalls;
 		}
-		if (state.gameObject.id === 'npc1') {
-			// console.log(state.gameObject.direction);
-		}
 		state.gameObject.sprite = updateSprite(state.gameObject);
 		return state;
 	},
 );
 
-const isMoving = ({ gameObject }) => {
-	return gameObject.movingProgressRemaining > 0;
-};
+const isMoving = ({ gameObject }) => gameObject.movingProgressRemaining > 0;
 
 const updatePerson = (isCutscenePlaying, arrow, { gameObjects, walls }) =>
 	Object.keys(gameObjects).reduce(

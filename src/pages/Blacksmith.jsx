@@ -11,9 +11,11 @@ import LayerImage from '../models/LayerImage';
 import LayerMap from '../models/LayerMap';
 import Person from '../models/Person';
 import withGrid from '../scripts/calc/withGrid';
+import doBehaviorEvent from '../scripts/event/doBehaviorEvent';
+import addWall from '../scripts/update/addWall';
 import updatePerson from '../scripts/updatePerson';
 const layer = new LayerMap({
-	walls: BLACKSMITH_BOUNDARIES,
+	walls: { ...BLACKSMITH_BOUNDARIES },
 	gameObjects: {
 		hero: new Person({
 			x: withGrid(12),
@@ -24,12 +26,11 @@ const layer = new LayerMap({
 			x: withGrid(3),
 			y: withGrid(6),
 			behaviorLoop: [
-				// { type: 'walk', direction: 'up' },
-				// { type: 'walk', direction: 'down' },
-				{ type: 'stand', direction: 'left', time: 800 },
-				{ type: 'stand', direction: 'up', time: 800 },
-				{ type: 'stand', direction: 'right', time: 1200 },
-				{ type: 'stand', direction: 'up', time: 300 },
+				{ type: 'walk', direction: 'up' },
+				{ type: 'walk', direction: 'left' },
+				{ type: 'walk', direction: 'down' },
+				{ type: 'stand', direction: 'down', time: 5000 },
+				{ type: 'walk', direction: 'right' },
 			],
 		}),
 	},
@@ -41,6 +42,12 @@ const updatedLayer = {
 	walls: {},
 	isCutscenePlaying: false,
 	cutsceneSpaces: {},
+};
+
+const mountEventLoop = (layer, gameObject) => {
+	setTimeout(() => {
+		doBehaviorEvent(layer, gameObject);
+	}, 10);
 };
 
 let isMounted = false;
@@ -58,7 +65,6 @@ const BlacksmithPage = () => {
 			},
 		}),
 	);
-	const [eventState, setEventState] = useState({});
 	const directions = useKeyPressListener({});
 	const updateHandler = useCallback(
 		(time) => {
@@ -69,29 +75,32 @@ const BlacksmithPage = () => {
 					gameObjects,
 					walls,
 				});
-			gameObjects = updatedGameObjects;
-			walls = updatedWalls;
+			updatedLayer.gameObjects = updatedGameObjects;
+			updatedLayer.walls = updatedWalls;
 		},
 		[directions],
 	);
 	useRequestAnimationFrame(updateHandler);
-
 	useEffect(() => {
 		if (isMounted === true) return;
 		const deepLayer = clone(layer);
-		Object.keys(updatedLayer).forEach(
-			(key) => (updatedLayer[key] = deepLayer[key]),
-		);
-
+		Object.keys(layer).reduce((obj, key) => {
+			obj[key] = deepLayer[key];
+			return obj;
+		}, updatedLayer);
 		// build ID
 		Object.keys(updatedLayer.gameObjects).forEach((key) => {
 			const object = updatedLayer.gameObjects[key];
 			object.id = key;
+			updatedLayer.walls = addWall(
+				{ ...updatedLayer.walls },
+				object.x,
+				object.y,
+			);
+			mountEventLoop(updatedLayer, object);
 		});
+
 		isMounted = true;
-		return () => {
-			isMounted = false;
-		};
 	}, []);
 
 	return (
