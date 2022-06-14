@@ -4,6 +4,7 @@ class Person extends GameObject {
 	constructor(config) {
 		super(config);
 		this.movingProgressRemaining = config.movingProgressRemaining || 0;
+		this.isStanding = false;
 		this.isPlayerControlled = config.isPlayerControlled || false;
 		this.directionUpdate = {
 			up: ['y', -1],

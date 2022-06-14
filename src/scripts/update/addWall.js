@@ -1,9 +1,6 @@
-const addWall = (walls, x, y) => {
-	const state = {
-		...walls,
-	};
-	state[`${x},${y}`] = true;
-	return state;
+const addWall = ({ ...walls }, x, y) => {
+	walls[`${x},${y}`] = true;
+	return walls;
 };
 
 export default addWall;
