@@ -21,13 +21,11 @@ const updateAnimationProgress = ({
 		currentAnimationFrame,
 	};
 
-	//Downtick frame progress
 	if (state.animationFrameProgress > 0) {
 		state.animationFrameProgress -= 1;
 		return state;
 	}
 
-	//Reset the counter
 	state.animationFrameProgress = state.animationFrameLimit;
 	state.currentAnimationFrame += 1;
 	if (calculateFrame(state) === undefined) {
@@ -41,6 +39,14 @@ const drawImage = (ctx, state, cameraPerson) => {
 		state.image,
 		withGrid(10.5) - cameraPerson.x,
 		withGrid(6) - cameraPerson.y,
+	);
+};
+
+const drawUpperImage = (ctx, state, cameraPerson) => {
+	ctx.drawImage(
+		state.image,
+		state.x + withGrid(10.5) - cameraPerson.x,
+		state.y + withGrid(6) - cameraPerson.y,
 	);
 };
 
@@ -97,7 +103,16 @@ const GameCanvas = React.memo(({ layer, layerImage }) => {
 					sprite.currentAnimationFrame = currentAnimationFrame;
 					object.sprite = sprite;
 				});
-			// maps[0].drawUpperImage(ctx, cameraPerson);
+
+			Object.values(layerImage.uppers)
+				.sort((a, b) => a.y - b.y)
+				.forEach((object) => {
+					drawUpperImage(
+						ctx,
+						{ image: object.image, x: object.x, y: object.y },
+						cameraPerson,
+					);
+				});
 		});
 	});
 
