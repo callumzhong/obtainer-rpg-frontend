@@ -65,19 +65,14 @@ class LayerEvent {
 		});
 	}
 
-	// changeMap(resolve) {
-	// 	const sceneTransition = new SceneTransition();
-	// 	sceneTransition.init(document.querySelector('.game-container'), () => {
-	// 		this.map.overworld.startMap(window.OverworldMaps[this.event.map]);
-	// 		resolve();
+	changeMap(resolve, _, navigate) {
+		navigate(this.event.map, { replace: true });
+		resolve();
+	}
 
-	// 		sceneTransition.fadeOut();
-	// 	});
-	// }
-
-	init(setEventState) {
+	init(setEventState, navigate) {
 		return new Promise((resolve) => {
-			this[this.event.type](resolve, setEventState);
+			this[this.event.type](resolve, setEventState, navigate);
 		});
 	}
 }
