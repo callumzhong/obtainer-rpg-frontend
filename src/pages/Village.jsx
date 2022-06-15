@@ -1,70 +1,39 @@
 import { useCallback, useEffect, useState } from 'react';
-import hero1Image from '../assets/hero1_16.png';
-import plaqueImage from '../assets/plaque.png';
-import villageImage from '../assets/village.png';
-import Conversation from '../components/Conversation/Conversation';
+import { useNavigate } from 'react-router-dom';
+import villageLowerImage from '../assets/images/map/villageLower.png';
 import GameCanvas from '../components/GameCanvas';
 import VILLAGE_BOUNDARIES from '../data/villageBoundaries';
+import emitter, { eventName } from '../emitter';
 import useKeyPressDirectionListener from '../hooks/useKeyPressDirectionListener';
 import useKeyPressDownListener from '../hooks/useKeyPressDownListener';
 import useRequestAnimationFrame from '../hooks/useRequestAnimationFrame';
 import Camera from '../layouts/Camera';
-import LayerImage from '../models/LayerImage';
-import LayerMap from '../models/LayerMap';
-import Person from '../models/Person';
-import withGrid from '../scripts/calc/withGrid';
-import checkForActionCutscene from '../scripts/checkForActionCutscene';
-import mountEventLoop from '../scripts/mountEventLoop';
-import addWall from '../scripts/update/addWall';
-import updatePerson from '../scripts/updatePerson';
-const layerImage = new LayerImage({
-	lowerSrc: villageImage,
-	uppers: {
-		plaque: {
-			imageSrc: plaqueImage,
-			x: withGrid(36),
-			y: withGrid(20),
-		},
-	},
-	gameObjects: {
-		hero: {
-			imageSrc: hero1Image,
-		},
-		npc1: {
-			imageSrc: hero1Image,
-		},
-	},
-});
+import LayerMap from '../scripts/LayerMap';
+import Person from '../scripts/Person';
+import asGridCoord from '../utils/asGridCoords';
+import withGrid from '../utils/withGrid';
 
 const layer = new LayerMap({
-	walls: {
-		...VILLAGE_BOUNDARIES,
-	},
+	lowerSrc: villageLowerImage,
 	gameObjects: {
 		hero: new Person({
-			x: withGrid(24),
-			y: withGrid(25),
 			isPlayerControlled: true,
+			x: withGrid(37),
+			y: withGrid(23),
 		}),
-		npc1: new Person({
-			x: withGrid(15),
-			y: withGrid(6),
-			direction: 'up',
-			talking: [
-				{
-					events: [
-						{ type: 'textMessage', text: "I'm busy...", faceHero: 'npc1' },
-						{ type: 'textMessage', text: 'Go away!' },
-						{ who: 'npc1', type: 'stand', direction: 'up', time: 200 },
-					],
-				},
-			],
-		}),
+	},
+	walls: { ...VILLAGE_BOUNDARIES },
+	cutsceneSpaces: {
+		[asGridCoord(24, 24)]: [
+			{
+				events: [{ type: 'changeMap', map: '/' }],
+			},
+		],
 	},
 });
 
-let isMounted = false;
 const VillagePage = () => {
+	const navigate = useNavigate();
 	const [eventState, setEventState] = useState({
 		type: '',
 		text: '',
@@ -73,44 +42,46 @@ const VillagePage = () => {
 	const directions = useKeyPressDirectionListener();
 	const updateHandler = useCallback(
 		(time) => {
-			if (!isMounted) return;
-			let { gameObjects, walls, isCutscenePlaying } = layer;
-			const { walls: updatedWalls, gameObjects: updatedGameObjects } =
-				updatePerson(isCutscenePlaying, directions[0], {
-					gameObjects,
-					walls,
+			Object.values(layer.gameObjects).forEach((object) => {
+				object.update({
+					arrow: directions[0],
+					map: layer,
 				});
-			layer.gameObjects = updatedGameObjects;
-			layer.walls = updatedWalls;
+			});
 		},
 		[directions],
 	);
-	useKeyPressDownListener('Enter', () => {
-		checkForActionCutscene(setEventState, layer);
-		if (eventState.type === 'textMessage') {
-			eventState.onComplete();
-		}
-	});
+
+	const bindHeroPositionCheck = useCallback(
+		(e) => {
+			if (e.whoId === 'hero') {
+				layer.checkForFootstepCutscene(setEventState, navigate);
+			}
+		},
+		[navigate],
+	);
+
+	const bindActionInput = useCallback(() => {
+		layer.checkForActionCutscene(setEventState, navigate);
+	}, [navigate]);
+
+	useKeyPressDownListener('Enter', bindActionInput);
 	useRequestAnimationFrame(updateHandler);
 	useEffect(() => {
-		if (isMounted === true) return;
-		// build ID
-		Object.keys(layer.gameObjects).forEach((key) => {
-			const object = layer.gameObjects[key];
-			object.id = key;
-			layer.walls = addWall({ ...layer.walls }, object.x, object.y);
-			mountEventLoop(layer, object);
-		});
-
-		isMounted = true;
-	}, []);
+		layer.route = 'blacksmith';
+		layer.mountObjects(setEventState);
+		emitter.on(eventName.walk, bindHeroPositionCheck);
+		return () => {
+			emitter.off(eventName.walk, bindHeroPositionCheck);
+		};
+	}, [bindHeroPositionCheck]);
 
 	return (
 		<>
 			<Camera>
-				<GameCanvas layer={layer} layerImage={layerImage} />
+				<GameCanvas layer={layer} />
 			</Camera>
-			{eventState.type === 'textMessage' && <Conversation event={eventState} />}
+			{/* {eventState.type === 'textMessage' && <Conversation event={eventState} />} */}
 		</>
 	);
 };

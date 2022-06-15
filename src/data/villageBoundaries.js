@@ -1,4 +1,5 @@
-import asGridCoord from '../scripts/calc/asGridCoords';
+import asGridCoord from '../utils/asGridCoords';
+
 const VILLAGE_BOUNDARIES = [
 	{
 		x: 23,

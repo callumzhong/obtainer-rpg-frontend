@@ -1,122 +1,27 @@
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 import useRequestAnimationFrame from '../hooks/useRequestAnimationFrame';
 import Canvas from '../modules/Canvas';
-import calculateFrame from '../scripts/calc/calculateFrame';
-import withGrid from '../scripts/calc/withGrid';
 
-const updateAnimationProgress = ({
-	sprite: {
-		animations,
-		currentAnimation,
-		animationFrameLimit,
-		animationFrameProgress,
-		currentAnimationFrame,
-	},
-}) => {
-	const state = {
-		animations: { ...animations },
-		currentAnimation,
-		animationFrameLimit,
-		animationFrameProgress,
-		currentAnimationFrame,
-	};
-
-	if (state.animationFrameProgress > 0) {
-		state.animationFrameProgress -= 1;
-		return state;
-	}
-
-	state.animationFrameProgress = state.animationFrameLimit;
-	state.currentAnimationFrame += 1;
-	if (calculateFrame(state) === undefined) {
-		state.currentAnimationFrame = 0;
-	}
-	return state;
-};
-
-const drawImage = (ctx, state, cameraPerson) => {
-	ctx.drawImage(
-		state.image,
-		withGrid(10.5) - cameraPerson.x,
-		withGrid(6) - cameraPerson.y,
-	);
-};
-
-const drawUpperImage = (ctx, state, cameraPerson) => {
-	ctx.drawImage(
-		state.image,
-		state.x + withGrid(10.5) - cameraPerson.x,
-		state.y + withGrid(6) - cameraPerson.y,
-	);
-};
-
-const spriteDrawImage = (ctx, state, cameraPerson) => {
-	const x = state.x - 8 + withGrid(10.5) - cameraPerson.x;
-	const y = state.y - 18 + withGrid(6) - cameraPerson.y;
-	const { animations, currentAnimation, currentAnimationFrame } = state.sprite;
-	const [frameX, frameY] = calculateFrame({
-		animations,
-		currentAnimation,
-		currentAnimationFrame,
-	});
-
-	state.isLoaded &&
-		ctx.drawImage(
-			state.image,
-			frameX * 16,
-			frameY * 16,
-			16,
-			16,
-			x + 8,
-			y + 12,
-			16,
-			16,
-		);
-};
-
-const GameCanvas = React.memo(({ layer, layerImage }) => {
+const GameCanvas = ({ layer }) => {
 	const canvasRef = useRef();
-	const { gameObjects: gameObjectsImage } = layerImage;
-	const gameObjectKeys = Object.keys(gameObjectsImage);
 	useRequestAnimationFrame((time) => {
 		//camera center
 		const cameraPerson = layer.gameObjects.hero;
-		canvasRef.current.draw((ctx) => {
-			drawImage(ctx, { image: layerImage.lowerImage }, cameraPerson);
+		canvasRef.current &&
+			canvasRef.current.draw((ctx) => {
+				layer.drawLowerImage(ctx, cameraPerson);
 
-			Object.values(layer.gameObjects)
-				.sort((a, b) => a.y - b.y)
-				.forEach((object, i) => {
-					const { sprite } = object;
-					const currentImage = gameObjectsImage[gameObjectKeys[i]];
-					const spriteDrawState = {
-						...object,
-						image: currentImage.image,
-						isLoaded: currentImage.isLoaded,
-					};
+				Object.values(layer.gameObjects)
+					.sort((a, b) => a.y - b.y)
+					.forEach((object) => {
+						object.sprite.draw(ctx, cameraPerson);
+					});
 
-					spriteDrawImage(ctx, spriteDrawState, cameraPerson);
-					const { animationFrameProgress, currentAnimationFrame } =
-						updateAnimationProgress(object);
-
-					sprite.animationFrameProgress = animationFrameProgress;
-					sprite.currentAnimationFrame = currentAnimationFrame;
-					object.sprite = sprite;
-				});
-
-			Object.values(layerImage.uppers)
-				.sort((a, b) => a.y - b.y)
-				.forEach((object) => {
-					drawUpperImage(
-						ctx,
-						{ image: object.image, x: object.x, y: object.y },
-						cameraPerson,
-					);
-				});
-		});
+				// layer.drawUpperImage(ctx, cameraPerson);
+			});
 	});
 
 	return <Canvas height='198' width='352' ref={canvasRef} />;
-});
+};
 
 export default GameCanvas;

@@ -1,108 +1,117 @@
 import { useCallback, useEffect, useState } from 'react';
-import blacksmithLowerImage from '../assets/blacksmithLower.png';
-import hero1Image from '../assets/hero1_16.png';
+import { useNavigate } from 'react-router-dom';
+import heroImage from '../assets/images/characters/people/hero.png';
+import blacksmithLowerImage from '../assets/images/map/blacksmithLower.png';
 import Conversation from '../components/Conversation/Conversation';
+import FurnaceMessage from '../components/Conversation/FurnaceMessage';
+import FurnaceModal from '../components/FurnaceModal/FurnaceModal';
 import GameCanvas from '../components/GameCanvas';
 import BLACKSMITH_BOUNDARIES from '../data/blacksmithBoundaries';
+import emitter, { eventName } from '../emitter';
 import useKeyPressDirectionListener from '../hooks/useKeyPressDirectionListener';
 import useKeyPressDownListener from '../hooks/useKeyPressDownListener';
 import useRequestAnimationFrame from '../hooks/useRequestAnimationFrame';
 import Camera from '../layouts/Camera';
-import LayerImage from '../models/LayerImage';
-import LayerMap from '../models/LayerMap';
-import Person from '../models/Person';
-import withGrid from '../scripts/calc/withGrid';
-import checkForActionCutscene from '../scripts/checkForActionCutscene';
-import mountEventLoop from '../scripts/mountEventLoop';
-import addWall from '../scripts/update/addWall';
-import updatePerson from '../scripts/updatePerson';
+import LayerMap from '../scripts/LayerMap';
+import Person from '../scripts/Person';
+import withGrid from '../utils/withGrid';
 
 const layer = new LayerMap({
-	walls: { ...BLACKSMITH_BOUNDARIES },
+	lowerSrc: blacksmithLowerImage,
 	gameObjects: {
 		hero: new Person({
-			x: withGrid(12),
-			y: withGrid(6),
 			isPlayerControlled: true,
+			x: withGrid(2),
+			y: withGrid(7),
 		}),
 		npc1: new Person({
-			x: withGrid(15),
-			y: withGrid(6),
+			x: withGrid(1),
+			y: withGrid(7),
+			src: heroImage,
 			direction: 'up',
 			talking: [
 				{
 					events: [
-						{ type: 'textMessage', text: "I'm busy...", faceHero: 'npc1' },
-						{ type: 'textMessage', text: 'Go away!' },
+						{ type: 'conversation', element: FurnaceMessage, faceHero: 'npc1' },
 						{ who: 'npc1', type: 'stand', direction: 'up', time: 200 },
 					],
 				},
 			],
 		}),
 	},
+	walls: { ...BLACKSMITH_BOUNDARIES },
+	// cutsceneSpaces: {
+	// 	[asGridCoord(12, 9)]: [
+	// 		{
+	// 			events: [{ type: 'changeMap', map: 'village' }],
+	// 		},
+	// 	],
+	// },
 });
 
-let isMounted = false;
 const BlacksmithPage = () => {
-	const [layerImageState, setLayerImageState] = useState(
-		new LayerImage({
-			lowerSrc: blacksmithLowerImage,
-			gameObjects: {
-				hero: {
-					imageSrc: hero1Image,
-				},
-				npc1: {
-					imageSrc: hero1Image,
-				},
-			},
-		}),
-	);
+	const navigate = useNavigate();
+	const [modalIsOpen, setIsOpen] = useState(false);
 	const [eventState, setEventState] = useState({
 		type: '',
 		text: '',
 		onComplete: () => {},
 	});
+
+	const openModal = () => {
+		setIsOpen(true);
+	};
+
+	const closeModal = () => {
+		setIsOpen(false);
+	};
+
 	const directions = useKeyPressDirectionListener();
-	const updateHandler = useCallback(
-		(time) => {
-			if (!isMounted) return;
-			let { gameObjects, walls, isCutscenePlaying } = layer;
-			const { walls: updatedWalls, gameObjects: updatedGameObjects } =
-				updatePerson(isCutscenePlaying, directions[0], {
-					gameObjects,
-					walls,
-				});
-			layer.gameObjects = updatedGameObjects;
-			layer.walls = updatedWalls;
+	const bindHeroPositionCheck = useCallback(
+		(e) => {
+			if (e.whoId === 'hero') {
+				layer.checkForFootstepCutscene(setEventState, navigate);
+			}
 		},
-		[directions],
+		[navigate],
 	);
 	useKeyPressDownListener('Enter', () => {
-		checkForActionCutscene(setEventState, layer);
-		if (eventState.type === 'textMessage') {
-			eventState.onComplete();
-		}
+		if (modalIsOpen) return;
+		layer.checkForActionCutscene(setEventState, navigate);
 	});
-	useRequestAnimationFrame(updateHandler);
-	useEffect(() => {
-		if (isMounted === true) return;
-		// build ID
-		Object.keys(layer.gameObjects).forEach((key) => {
-			const object = layer.gameObjects[key];
-			object.id = key;
-			layer.walls = addWall({ ...layer.walls }, object.x, object.y);
-			mountEventLoop(layer, object);
+	useRequestAnimationFrame((time) => {
+		if (modalIsOpen) return;
+		Object.values(layer.gameObjects).forEach((object) => {
+			object.update({
+				arrow: directions[0],
+				map: layer,
+			});
 		});
+	});
 
-		isMounted = true;
-	}, []);
+	useEffect(() => {
+		layer.mountObjects(setEventState);
+		emitter.on(eventName.walk, bindHeroPositionCheck);
+		return () => {
+			emitter.off(eventName.walk, bindHeroPositionCheck);
+		};
+	}, [bindHeroPositionCheck]);
 
 	return (
 		<>
 			<Camera>
-				<GameCanvas layer={layer} layerImage={layerImageState} />
+				<GameCanvas layer={layer} />
 			</Camera>
-			{eventState.type === 'textMessage' && <Conversation event={eventState} />}
+
+			{eventState.type === 'conversation' && (
+				<Conversation event={eventState} />
+			)}
+			<FurnaceModal
+				closeModal={closeModal}
+				event={eventState}
+				modalIsOpen={modalIsOpen}
+				openModal={openModal}
+			/>
 		</>
 	);
 };

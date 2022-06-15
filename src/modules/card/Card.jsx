@@ -7,10 +7,15 @@ export const CardPosition = {
 
 Object.freeze(CardPosition);
 
-const Card = ({ className, position, ...props }) => {
+const Card = ({ className, position, mode, ...props }) => {
 	return (
 		<div
-			className={clsx('border border-sandal bg-karry', position, className)}
+			className={clsx(
+				'border-4 border-double border-sandal bg-karry p-5',
+				position,
+				mode,
+				className,
+			)}
 			children={props.children}
 		/>
 	);
