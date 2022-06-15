@@ -50,14 +50,14 @@ class LayerEvent {
 		emitter.on(eventName.walk, completeHandler);
 	}
 
-	textMessage(resolve, setEventState) {
+	conversation(resolve, setEventState) {
 		if (this.event.faceHero) {
 			const obj = this.map.gameObjects[this.event.faceHero];
 			obj.direction = oppositeDirection(this.map.gameObjects['hero'].direction);
 		}
 		setEventState({
-			type: 'textMessage',
-			text: this.event.text,
+			type: this.event.type,
+			element: this.event.element,
 			onComplete: () => {
 				resolve();
 				setEventState({});

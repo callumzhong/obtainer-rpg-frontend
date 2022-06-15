@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import heroImage from '../assets/images/characters/people/hero.png';
 import blacksmithLowerImage from '../assets/images/map/blacksmithLower.png';
 import Conversation from '../components/Conversation/Conversation';
+import FurnaceMessage from '../components/Conversation/FurnaceMessage';
+import FurnaceModal from '../components/FurnaceModal/FurnaceModal';
 import GameCanvas from '../components/GameCanvas';
 import BLACKSMITH_BOUNDARIES from '../data/blacksmithBoundaries';
 import emitter, { eventName } from '../emitter';
@@ -12,7 +14,6 @@ import useRequestAnimationFrame from '../hooks/useRequestAnimationFrame';
 import Camera from '../layouts/Camera';
 import LayerMap from '../scripts/LayerMap';
 import Person from '../scripts/Person';
-import asGridCoord from '../utils/asGridCoords';
 import withGrid from '../utils/withGrid';
 
 const layer = new LayerMap({
@@ -20,19 +21,18 @@ const layer = new LayerMap({
 	gameObjects: {
 		hero: new Person({
 			isPlayerControlled: true,
-			x: withGrid(12),
-			y: withGrid(6),
+			x: withGrid(2),
+			y: withGrid(7),
 		}),
 		npc1: new Person({
-			x: withGrid(15),
-			y: withGrid(6),
+			x: withGrid(1),
+			y: withGrid(7),
 			src: heroImage,
 			direction: 'up',
 			talking: [
 				{
 					events: [
-						{ type: 'textMessage', text: "I'm busy...", faceHero: 'npc1' },
-						{ type: 'textMessage', text: 'Go away!' },
+						{ type: 'conversation', element: FurnaceMessage, faceHero: 'npc1' },
 						{ who: 'npc1', type: 'stand', direction: 'up', time: 200 },
 					],
 				},
@@ -40,35 +40,33 @@ const layer = new LayerMap({
 		}),
 	},
 	walls: { ...BLACKSMITH_BOUNDARIES },
-	cutsceneSpaces: {
-		[asGridCoord(12, 9)]: [
-			{
-				events: [{ type: 'changeMap', map: 'village' }],
-			},
-		],
-	},
+	// cutsceneSpaces: {
+	// 	[asGridCoord(12, 9)]: [
+	// 		{
+	// 			events: [{ type: 'changeMap', map: 'village' }],
+	// 		},
+	// 	],
+	// },
 });
 
 const BlacksmithPage = () => {
 	const navigate = useNavigate();
+	const [modalIsOpen, setIsOpen] = useState(false);
 	const [eventState, setEventState] = useState({
 		type: '',
 		text: '',
 		onComplete: () => {},
 	});
-	const directions = useKeyPressDirectionListener();
-	const updateHandler = useCallback(
-		(time) => {
-			Object.values(layer.gameObjects).forEach((object) => {
-				object.update({
-					arrow: directions[0],
-					map: layer,
-				});
-			});
-		},
-		[directions],
-	);
 
+	const openModal = () => {
+		setIsOpen(true);
+	};
+
+	const closeModal = () => {
+		setIsOpen(false);
+	};
+
+	const directions = useKeyPressDirectionListener();
 	const bindHeroPositionCheck = useCallback(
 		(e) => {
 			if (e.whoId === 'hero') {
@@ -77,13 +75,20 @@ const BlacksmithPage = () => {
 		},
 		[navigate],
 	);
-
-	const bindActionInput = useCallback(() => {
+	useKeyPressDownListener('Enter', () => {
+		if (modalIsOpen) return;
 		layer.checkForActionCutscene(setEventState, navigate);
-	}, [navigate]);
+	});
+	useRequestAnimationFrame((time) => {
+		if (modalIsOpen) return;
+		Object.values(layer.gameObjects).forEach((object) => {
+			object.update({
+				arrow: directions[0],
+				map: layer,
+			});
+		});
+	});
 
-	useKeyPressDownListener('Enter', bindActionInput);
-	useRequestAnimationFrame(updateHandler);
 	useEffect(() => {
 		layer.mountObjects(setEventState);
 		emitter.on(eventName.walk, bindHeroPositionCheck);
@@ -91,12 +96,22 @@ const BlacksmithPage = () => {
 			emitter.off(eventName.walk, bindHeroPositionCheck);
 		};
 	}, [bindHeroPositionCheck]);
+
 	return (
 		<>
 			<Camera>
 				<GameCanvas layer={layer} />
 			</Camera>
-			{eventState.type === 'textMessage' && <Conversation event={eventState} />}
+
+			{eventState.type === 'conversation' && (
+				<Conversation event={eventState} />
+			)}
+			<FurnaceModal
+				closeModal={closeModal}
+				event={eventState}
+				modalIsOpen={modalIsOpen}
+				openModal={openModal}
+			/>
 		</>
 	);
 };
