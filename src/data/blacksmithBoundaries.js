@@ -1,4 +1,4 @@
-import asGridCoord from '../scripts/calc/asGridCoords';
+import asGridCoord from '../utils/asGridCoords';
 
 const BLACKSMITH_BOUNDARIES = [
 	{

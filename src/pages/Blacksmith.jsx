@@ -1,34 +1,37 @@
 import { useCallback, useEffect, useState } from 'react';
 import blacksmithLowerImage from '../assets/blacksmithLower.png';
-import hero1Image from '../assets/hero1_16.png';
+import heroImage from '../assets/images/characters/people/hero.png';
 import Conversation from '../components/Conversation/Conversation';
 import GameCanvas from '../components/GameCanvas';
 import BLACKSMITH_BOUNDARIES from '../data/blacksmithBoundaries';
+import emitter, { eventName } from '../emitter';
 import useKeyPressDirectionListener from '../hooks/useKeyPressDirectionListener';
 import useKeyPressDownListener from '../hooks/useKeyPressDownListener';
 import useRequestAnimationFrame from '../hooks/useRequestAnimationFrame';
 import Camera from '../layouts/Camera';
-import LayerImage from '../models/LayerImage';
-import LayerMap from '../models/LayerMap';
-import Person from '../models/Person';
-import withGrid from '../scripts/calc/withGrid';
-import checkForActionCutscene from '../scripts/checkForActionCutscene';
-import mountEventLoop from '../scripts/mountEventLoop';
-import addWall from '../scripts/update/addWall';
-import updatePerson from '../scripts/updatePerson';
+import LayerMap from '../scripts/LayerMap';
+import Person from '../scripts/Person';
+import withGrid from '../utils/withGrid';
 
 const layer = new LayerMap({
-	walls: { ...BLACKSMITH_BOUNDARIES },
+	lowerSrc: blacksmithLowerImage,
 	gameObjects: {
 		hero: new Person({
+			isPlayerControlled: true,
 			x: withGrid(12),
 			y: withGrid(6),
-			isPlayerControlled: true,
 		}),
 		npc1: new Person({
 			x: withGrid(15),
 			y: withGrid(6),
+			src: heroImage,
 			direction: 'up',
+			behaviorLoop: [
+				{ type: 'stand', direction: 'left', time: 4000 },
+				{ type: 'stand', direction: 'up', time: 800 },
+				{ type: 'stand', direction: 'right', time: 1200 },
+				{ type: 'stand', direction: 'up', time: 300 },
+			],
 			talking: [
 				{
 					events: [
@@ -40,23 +43,10 @@ const layer = new LayerMap({
 			],
 		}),
 	},
+	walls: { ...BLACKSMITH_BOUNDARIES },
 });
 
-let isMounted = false;
 const BlacksmithPage = () => {
-	const [layerImageState, setLayerImageState] = useState(
-		new LayerImage({
-			lowerSrc: blacksmithLowerImage,
-			gameObjects: {
-				hero: {
-					imageSrc: hero1Image,
-				},
-				npc1: {
-					imageSrc: hero1Image,
-				},
-			},
-		}),
-	);
 	const [eventState, setEventState] = useState({
 		type: '',
 		text: '',
@@ -65,42 +55,40 @@ const BlacksmithPage = () => {
 	const directions = useKeyPressDirectionListener();
 	const updateHandler = useCallback(
 		(time) => {
-			if (!isMounted) return;
-			let { gameObjects, walls, isCutscenePlaying } = layer;
-			const { walls: updatedWalls, gameObjects: updatedGameObjects } =
-				updatePerson(isCutscenePlaying, directions[0], {
-					gameObjects,
-					walls,
+			Object.values(layer.gameObjects).forEach((object) => {
+				object.update({
+					arrow: directions[0],
+					map: layer,
 				});
-			layer.gameObjects = updatedGameObjects;
-			layer.walls = updatedWalls;
+			});
 		},
 		[directions],
 	);
-	useKeyPressDownListener('Enter', () => {
-		checkForActionCutscene(setEventState, layer);
-		if (eventState.type === 'textMessage') {
-			eventState.onComplete();
-		}
-	});
-	useRequestAnimationFrame(updateHandler);
-	useEffect(() => {
-		if (isMounted === true) return;
-		// build ID
-		Object.keys(layer.gameObjects).forEach((key) => {
-			const object = layer.gameObjects[key];
-			object.id = key;
-			layer.walls = addWall({ ...layer.walls }, object.x, object.y);
-			mountEventLoop(layer, object);
-		});
 
-		isMounted = true;
+	const bindHeroPositionCheck = useCallback((e) => {
+		if (e.whoId === 'hero') {
+			layer.checkForFootstepCutscene(setEventState);
+		}
 	}, []);
 
+	const bindActionInput = useCallback(() => {
+		layer.checkForActionCutscene(setEventState);
+	}, []);
+
+	useKeyPressDownListener('Enter', bindActionInput);
+	useRequestAnimationFrame(updateHandler);
+	useEffect(() => {
+		layer.route = 'blacksmith';
+		layer.mountObjects(setEventState);
+		emitter.on(eventName.walk, bindHeroPositionCheck);
+		return () => {
+			emitter.off(eventName.walk, bindHeroPositionCheck);
+		};
+	}, [bindHeroPositionCheck]);
 	return (
 		<>
 			<Camera>
-				<GameCanvas layer={layer} layerImage={layerImageState} />
+				<GameCanvas layer={layer} />
 			</Camera>
 			{eventState.type === 'textMessage' && <Conversation event={eventState} />}
 		</>
