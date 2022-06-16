@@ -1,24 +1,16 @@
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import ReactModal from 'react-modal';
-import styles from 'styles';
 
 ReactModal.setAppElement('#root');
-const Modal = ({
-	className,
-	isOpen,
-	onRequestClose,
-	onAfterOpen,
-	contentLabel,
-	...props
-}) => {
+const Modal = (props) => {
 	return (
 		<ReactModal
-			isOpen={isOpen}
-			onAfterOpen={onAfterOpen}
-			onRequestClose={onRequestClose}
-			contentLabel={contentLabel}
-			className={clsx('overflow-auto', className)}
+			isOpen={props.isOpen}
+			onAfterOpen={props.onAfterOpen}
+			onRequestClose={props.onRequestClose}
+			contentLabel={props.contentLabel}
+			className={clsx('overflow-auto', props.className)}
 			overlayClassName='fixed top-0 bottom-0 left-0 right-0 bg-[rgba(0,0,0,.15)]'
 		>
 			{props.children}
@@ -27,7 +19,11 @@ const Modal = ({
 };
 
 Modal.propTypes = {
-	className: PropTypes.oneOf(Object.keys(styles)),
+	className: PropTypes.string,
+	isOpen: PropTypes.bool.isRequired,
+	onRequestClose: PropTypes.func,
+	onAfterOpen: PropTypes.func,
+	contentLabel: PropTypes.string.isRequired,
 };
 
 export default Modal;

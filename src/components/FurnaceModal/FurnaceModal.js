@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import useKeyPressDownListener from 'hooks/useKeyPressDownListener';
 import Modal from 'modules/modal/Modal';
 import ReactModal from 'react-modal';
@@ -19,10 +20,10 @@ const FurnaceModal = ({ event, modalIsOpen, openModal, closeModal }) => {
 
 	return (
 		<Modal
-			className={styles.position_fullscreen}
+			className={clsx(styles.position_fullscreen, 'bg-white p-4')}
 			isOpen={modalIsOpen}
 			onRequestClose={closeModal}
-			contentLabel='Example Modal'
+			contentLabel='Furnace Modal'
 		>
 			<button onClick={closeModal}>close</button>
 			<div>I am a modal</div>
