@@ -1,20 +1,20 @@
+import heroImage from 'assets/images/characters/people/hero.png';
+import blacksmithLowerImage from 'assets/images/map/blacksmithLower.png';
+import Conversation from 'components/Conversation/Conversation';
+import FurnaceMessage from 'components/Conversation/FurnaceMessage';
+import FurnaceModal from 'components/FurnaceModal/FurnaceModal';
+import GameCanvas from 'components/GameCanvas';
+import BLACKSMITH_BOUNDARIES from 'constants/blacksmithBoundaries';
+import emitter, { eventName } from 'emitter';
+import useKeyPressDirectionListener from 'hooks/useKeyPressDirectionListener';
+import useKeyPressDownListener from 'hooks/useKeyPressDownListener';
+import useRequestAnimationFrame from 'hooks/useRequestAnimationFrame';
+import Camera from 'layouts/Camera';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import heroImage from '../assets/images/characters/people/hero.png';
-import blacksmithLowerImage from '../assets/images/map/blacksmithLower.png';
-import Conversation from '../components/Conversation/Conversation';
-import FurnaceMessage from '../components/Conversation/FurnaceMessage';
-import FurnaceModal from '../components/FurnaceModal/FurnaceModal';
-import GameCanvas from '../components/GameCanvas';
-import BLACKSMITH_BOUNDARIES from '../data/blacksmithBoundaries';
-import emitter, { eventName } from '../emitter';
-import useKeyPressDirectionListener from '../hooks/useKeyPressDirectionListener';
-import useKeyPressDownListener from '../hooks/useKeyPressDownListener';
-import useRequestAnimationFrame from '../hooks/useRequestAnimationFrame';
-import Camera from '../layouts/Camera';
-import LayerMap from '../scripts/LayerMap';
-import Person from '../scripts/Person';
-import withGrid from '../utils/withGrid';
+import LayerMap from 'scripts/LayerMap';
+import Person from 'scripts/Person';
+import withGrid from 'utils/withGrid';
 
 const layer = new LayerMap({
 	lowerSrc: blacksmithLowerImage,

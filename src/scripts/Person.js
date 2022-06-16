@@ -1,4 +1,4 @@
-import emitter, { eventName } from '../emitter';
+import emitter, { eventName } from 'emitter';
 import GameObject from './GameObject';
 class Person extends GameObject {
 	constructor(config) {

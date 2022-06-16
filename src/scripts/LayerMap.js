@@ -1,5 +1,5 @@
-import nextPosition from '../utils/nextPosition';
-import withGrid from '../utils/withGrid';
+import nextPosition from 'utils/nextPosition';
+import withGrid from 'utils/withGrid';
 import LayerEvent from './LayerEvent';
 class LayerMap {
 	constructor(config) {

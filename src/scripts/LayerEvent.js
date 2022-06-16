@@ -1,5 +1,5 @@
-import emitter, { eventName } from '../emitter';
-import oppositeDirection from '../utils/oppositeDirection';
+import emitter, { eventName } from 'emitter';
+import oppositeDirection from 'utils/oppositeDirection';
 class LayerEvent {
 	constructor({ map, event }) {
 		this.map = map;

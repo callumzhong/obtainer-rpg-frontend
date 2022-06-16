@@ -1,22 +1,9 @@
+import useKeyPressDownListener from 'hooks/useKeyPressDownListener';
+import Modal from 'modules/modal/Modal';
 import ReactModal from 'react-modal';
-import useKeyPressDownListener from '../../hooks/useKeyPressDownListener';
-ReactModal.setAppElement('#root');
+import styles from 'styles';
 
-const customStyles = {
-	overlay: {
-		backgroundColor: 'rgba(0, 0, 0, 0.15)',
-	},
-	content: {
-		top: '50%',
-		left: '50%',
-		right: 'auto',
-		bottom: 'auto',
-		marginRight: '-50%',
-		transform: 'translate(-50%, -50%)',
-		width: '80vw',
-		height: '90%',
-	},
-};
+ReactModal.setAppElement('#root');
 
 const FurnaceModal = ({ event, modalIsOpen, openModal, closeModal }) => {
 	useKeyPressDownListener('KeyQ', () => {
@@ -31,10 +18,10 @@ const FurnaceModal = ({ event, modalIsOpen, openModal, closeModal }) => {
 	});
 
 	return (
-		<ReactModal
+		<Modal
+			className={styles.position_fullscreen}
 			isOpen={modalIsOpen}
 			onRequestClose={closeModal}
-			style={customStyles}
 			contentLabel='Example Modal'
 		>
 			<button onClick={closeModal}>close</button>
@@ -46,7 +33,7 @@ const FurnaceModal = ({ event, modalIsOpen, openModal, closeModal }) => {
 				<button>inside</button>
 				<button>the modal</button>
 			</form>
-		</ReactModal>
+		</Modal>
 	);
 };
 

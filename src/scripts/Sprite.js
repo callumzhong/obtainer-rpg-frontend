@@ -1,4 +1,4 @@
-import withGrid from '../utils/withGrid';
+import withGrid from 'utils/withGrid';
 
 class Sprite {
 	constructor(config) {

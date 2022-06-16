@@ -1,4 +1,4 @@
-import heroImage from '../assets/images/characters/people/hero.png';
+import heroImage from 'assets/images/characters/people/hero.png';
 import LayerEvent from './LayerEvent';
 import Sprite from './Sprite';
 

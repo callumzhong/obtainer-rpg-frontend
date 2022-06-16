@@ -1,4 +1,4 @@
-import { ReactComponent as EnterIcon } from '../../assets/icons/enter.svg';
+import { ReactComponent as EnterIcon } from 'assets/icons/enter.svg';
 
 const FurnaceMessage = () => {
 	return (

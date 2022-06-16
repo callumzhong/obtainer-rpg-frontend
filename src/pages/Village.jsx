@@ -1,17 +1,17 @@
+import villageLowerImage from 'assets/images/map/villageLower.png';
+import GameCanvas from 'components/GameCanvas';
+import VILLAGE_BOUNDARIES from 'constants/villageBoundaries';
+import emitter, { eventName } from 'emitter';
+import useKeyPressDirectionListener from 'hooks/useKeyPressDirectionListener';
+import useKeyPressDownListener from 'hooks/useKeyPressDownListener';
+import useRequestAnimationFrame from 'hooks/useRequestAnimationFrame';
+import Camera from 'layouts/Camera';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import villageLowerImage from '../assets/images/map/villageLower.png';
-import GameCanvas from '../components/GameCanvas';
-import VILLAGE_BOUNDARIES from '../data/villageBoundaries';
-import emitter, { eventName } from '../emitter';
-import useKeyPressDirectionListener from '../hooks/useKeyPressDirectionListener';
-import useKeyPressDownListener from '../hooks/useKeyPressDownListener';
-import useRequestAnimationFrame from '../hooks/useRequestAnimationFrame';
-import Camera from '../layouts/Camera';
-import LayerMap from '../scripts/LayerMap';
-import Person from '../scripts/Person';
-import asGridCoord from '../utils/asGridCoords';
-import withGrid from '../utils/withGrid';
+import LayerMap from 'scripts/LayerMap';
+import Person from 'scripts/Person';
+import asGridCoord from 'utils/asGridCoords';
+import withGrid from 'utils/withGrid';
 
 const layer = new LayerMap({
 	lowerSrc: villageLowerImage,

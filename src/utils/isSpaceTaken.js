@@ -1,4 +1,4 @@
-import nextPosition from '../calc/nextPosition';
+import nextPosition from './nextPosition';
 
 const isSpaceTaken = (walls, currentX, currentY, direction) => {
 	const { x, y } = nextPosition(currentX, currentY, direction);

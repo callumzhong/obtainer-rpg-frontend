@@ -1,5 +1,5 @@
-import useKeyPressDownListener from '../../hooks/useKeyPressDownListener';
-import Card, { CardPosition } from '../../modules/card/Card';
+import useKeyPressDownListener from 'hooks/useKeyPressDownListener';
+import Card, { CardPosition } from 'modules/card/Card';
 
 const Conversation = ({ event }) => {
 	const { element: Element } = event;
