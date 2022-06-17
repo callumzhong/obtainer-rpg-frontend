@@ -6,6 +6,7 @@
 @import './css/rpgui-cursor.css';
 @import './css/rpgui-disabled.css';
 @import './css/rpgui-scrollbar.css';
+@import './css/rpgui-base.css';
 @import 'tailwindcss/utilities';
 
 @layer base {
