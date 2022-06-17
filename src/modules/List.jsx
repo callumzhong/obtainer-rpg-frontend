@@ -12,6 +12,7 @@ const List = ({ className, items, onClick }) => {
 		<ul className={clsx(styles['rpgui-list-imp'], className)}>
 			{items.map((item, i) => (
 				<li
+					key={i}
 					onClick={(e) => {
 						setIndex(i);
 						clickHandler(e);

@@ -1,4 +1,4 @@
-const styles = {
+const classname = {
 	'position-fullscreen': 'absolute inset-0',
 	'position-bottom': 'absolute bottom-0 left-0 right-0',
 	border: 'border border-gray-500',
@@ -7,4 +7,4 @@ const styles = {
 	'gap-lg': 'gap-8',
 };
 
-export default styles;
+export default classname;

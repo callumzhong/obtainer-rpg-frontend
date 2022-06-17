@@ -1,13 +1,13 @@
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
-import styles from 'styles';
+import utilsStyles from 'utilsStyles';
 
 const Select = (props) => {
 	return (
 		<select
 			className={clsx(
 				'w-full bg-black py-1 px-2',
-				styles.border,
+				utilsStyles.border,
 				props.className,
 			)}
 		>
