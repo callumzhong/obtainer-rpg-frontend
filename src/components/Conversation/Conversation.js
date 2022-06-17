@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import useKeyPressDownListener from 'hooks/useKeyPressDownListener';
-import Card from 'modules/Card';
+import Card from 'modules/card/Card';
 import styles from 'styles';
 
 const Conversation = ({ event }) => {

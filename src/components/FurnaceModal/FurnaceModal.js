@@ -1,7 +1,6 @@
 import clsx from 'clsx';
 import useKeyPressDownListener from 'hooks/useKeyPressDownListener';
-import Modal from 'modules/Modal';
-import Select from 'modules/Select';
+import Modal from 'modules/modal/Modal';
 import {
 	GiAbdominalArmor,
 	GiAmericanShield,
@@ -52,9 +51,6 @@ const FurnaceModal = ({ event, modalIsOpen, openModal, closeModal }) => {
 						<GiAmericanShield className='h-6 w-6' />
 					</li>
 				</ul>
-				<Select className='mb-4'>
-					<option value='全部'>全部</option>
-				</Select>
 				<ul className='flex flex-col gap-4 bg-black bg-opacity-50'>
 					<li className='flex gap-4 border-b border-gray-500 px-2 py-1 hover:shadow-border'>
 						<img

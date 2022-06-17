@@ -1,5 +1,5 @@
 import useRequestAnimationFrame from 'hooks/useRequestAnimationFrame';
-import Canvas from 'modules/Canvas';
+import Canvas from 'modules/canvas/Canvas';
 import { useRef } from 'react';
 
 const GameCanvas = ({ layer }) => {
