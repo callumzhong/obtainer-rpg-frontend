@@ -1,12 +1,14 @@
-import BlacksmithPage from 'pages/Blacksmith';
-import VillagePage from 'pages/Village';
-import { Route, Routes } from 'react-router-dom';
+import Button from 'modules/Button';
+
 const App = () => {
 	return (
-		<Routes>
-			<Route path='/' element={<BlacksmithPage />} />
-			<Route path='/village' element={<VillagePage />} />
-		</Routes>
+		// <Routes>
+		// 	{/* <Route path='/' element={<BlacksmithPage />} />
+		// 	<Route path='/village' element={<VillagePage />} /> */}
+		// </Routes>
+		<div className='ml-5 mt-5'>
+			<Button className='font-bold text-white'>按鈕</Button>
+		</div>
 	);
 };
 

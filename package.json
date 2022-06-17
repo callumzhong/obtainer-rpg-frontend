@@ -11,6 +11,7 @@
 		"prop-types": "^15.8.1",
 		"react": "^18.1.0",
 		"react-dom": "^18.1.0",
+		"react-icons": "^4.4.0",
 		"react-modal": "^3.15.1",
 		"react-router-dom": "6",
 		"react-scripts": "5.0.1",
@@ -45,6 +46,7 @@
 		"postcss": "^8.4.14",
 		"prettier": "^2.6.2",
 		"prettier-plugin-tailwindcss": "^0.1.11",
-		"tailwindcss": "^3.0.24"
+		"tailwindcss": "^3.0.24",
+		"tailwindcss-image-rendering": "^1.0.2"
 	}
 }

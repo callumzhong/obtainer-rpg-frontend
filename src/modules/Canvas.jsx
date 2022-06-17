@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React, { useImperativeHandle, useRef } from 'react';
-import styles from './Canvas.module.css';
 const Canvas = React.forwardRef((props, ref) => {
 	const canvasRef = useRef();
 	useImperativeHandle(ref, () => ({
@@ -13,7 +12,7 @@ const Canvas = React.forwardRef((props, ref) => {
 
 	return (
 		<canvas
-			className={styles.canvas}
+			className='rendering-pixelated'
 			height={props.height}
 			width={props.width}
 			ref={canvasRef}

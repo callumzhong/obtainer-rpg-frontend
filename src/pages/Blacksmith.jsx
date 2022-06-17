@@ -51,7 +51,7 @@ const layer = new LayerMap({
 
 const BlacksmithPage = () => {
 	const navigate = useNavigate();
-	const [modalIsOpen, setIsOpen] = useState(false);
+	const [modalIsOpen, setIsOpen] = useState(true);
 	const [eventState, setEventState] = useState({
 		type: '',
 		text: '',
@@ -102,7 +102,6 @@ const BlacksmithPage = () => {
 			<Camera>
 				<GameCanvas layer={layer} />
 			</Camera>
-
 			{eventState.type === 'conversation' && (
 				<Conversation event={eventState} />
 			)}
