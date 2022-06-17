@@ -4,8 +4,7 @@
 
 @layer base {
 	body {
-		background-color: #2e222f;
+		/* background-color: #2e222f; */
 		overflow: hidden;
-		color: theme('colors.paco.DEFAULT');
 	}
 }
