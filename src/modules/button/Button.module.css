@@ -1,7 +1,7 @@
 .border {
   border-style: solid;
   border-image-source: url('assets/images/ui/button-border.png');
-  border-image-repeat: repeat;
+  border-image-repeat: stretch;
   border-image-slice: 10 12 fill;
   border-width: 10px 12px;
 }
