@@ -1,0 +1,11 @@
+.border {
+  border-style: solid;
+  border-image-source: url('assets/images/ui/bookmark-border.png');
+  border-image-repeat: repeat initial;
+  border-image-slice: 8 24 12 8 fill;
+  border-width: 8px 24px 12px 8px;
+}
+
+.border--hover:hover {
+  border-image-source: url('assets/images/ui/button-border-hover.png');
+}

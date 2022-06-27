@@ -1,15 +1,12 @@
-import Button from 'modules/button/Button';
+import SignInPage from 'pages/SignIn';
+import { Route, Routes } from 'react-router-dom';
 
 const App = () => {
-	return (
-		// <Routes>
-		// 	{/* <Route path='/' element={<BlacksmithPage />} />
-		// 	<Route path='/village' element={<VillagePage />} /> */}
-		// </Routes>
-		<div className='rpgui-content mx-5 mt-5'>
-			<Button>1312</Button>
-		</div>
-	);
+  return (
+    <Routes>
+      <Route path='/' element={<SignInPage />} />
+    </Routes>
+  );
 };
 
 export default App;

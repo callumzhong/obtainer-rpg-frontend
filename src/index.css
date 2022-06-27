@@ -1,17 +1,10 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
-
-/* rpgui https://github.com/RonenNess/RPGUI  */
-@import './css/rpgui-content.css';
-@import './css/rpgui-cursor.css';
-@import './css/rpgui-disabled.css';
-@import './css/rpgui-scrollbar.css';
-@import './css/rpgui-base.css';
 @import 'tailwindcss/utilities';
 
 @layer base {
-	body {
-		/* background-color: #2e222f; */
-		overflow: hidden;
-	}
+  body {
+    /* background-color: #2e222f; */
+    overflow: hidden;
+  }
 }

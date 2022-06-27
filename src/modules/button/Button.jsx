@@ -1,22 +1,27 @@
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import styles from './Button.module.css';
-const Button = ({ mode, className, onClick, children }) => {
-	return (
-		<button
-			onClick={onClick}
-			className={clsx(styles['rpgui-button'], styles[mode], className)}
-		>
-			{children}
-		</button>
-	);
+
+const Button = ({ className, onClick, children }) => {
+  return (
+    <button
+      onClick={onClick}
+      className={clsx(
+        'inline-block min-h-[48px] min-w-[48px] max-w-full bg-cover bg-clip-padding bg-center bg-no-repeat bg-origin-padding rendering-pixelated',
+        styles.border,
+        styles['border--hover'],
+        className,
+      )}
+    >
+      {children}
+    </button>
+  );
 };
 
 Button.propTypes = {
-	mode: PropTypes.oneOf(Object.keys(styles)),
-	className: PropTypes.string,
-	onClick: PropTypes.func.isRequired,
-	children: PropTypes.any,
+  className: PropTypes.string,
+  onClick: PropTypes.func.isRequired,
+  children: PropTypes.any,
 };
 
 export default Button;
