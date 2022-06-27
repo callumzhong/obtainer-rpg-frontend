@@ -1,13 +1,14 @@
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import styles from './Bookmark.module.css';
-const Bookmark = ({ className, onClick, children }) => {
+const Bookmark = ({ mode, className, onClick, children }) => {
   return (
     <div
       onClick={onClick}
       className={clsx(
-        'inline-block bg-cover bg-clip-padding bg-center bg-no-repeat bg-origin-padding rendering-pixelated',
+        'inline-block bg-cover bg-clip-padding bg-center bg-no-repeat bg-origin-padding leading-none rendering-pixelated',
         styles.border,
+        styles[mode],
         className,
       )}
     >

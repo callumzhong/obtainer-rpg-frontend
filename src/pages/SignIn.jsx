@@ -1,12 +1,15 @@
+import FoldArrow from 'modules/arrow/FoldArrow';
 import Bookmark from 'modules/bookmark/Bookmark';
-import Button from 'modules/button/Button';
 
 const SignInPage = (props) => {
   return (
-    <>
-      <Bookmark className='mt-5 ml-5'>12</Bookmark>
-      <Button>123</Button>
-    </>
+    <div className='flex flex-col items-center pt-5 pl-5'>
+      <Bookmark>12</Bookmark>
+      <Bookmark className='mt-5' mode={'action'}>
+        12
+      </Bookmark>
+      <FoldArrow>設置</FoldArrow>
+    </div>
     // <Layout>
 
     //   <SignIn></SignIn>

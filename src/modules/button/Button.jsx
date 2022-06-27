@@ -7,7 +7,7 @@ const Button = ({ className, onClick, children }) => {
     <button
       onClick={onClick}
       className={clsx(
-        'inline-block min-h-[48px] min-w-[48px] max-w-full bg-cover bg-clip-padding bg-center bg-no-repeat bg-origin-padding rendering-pixelated',
+        'inline-block min-h-[48px] min-w-[48px] max-w-full bg-cover bg-clip-padding bg-center bg-no-repeat bg-origin-padding leading-none rendering-pixelated',
         styles.border,
         styles['border--hover'],
         className,
