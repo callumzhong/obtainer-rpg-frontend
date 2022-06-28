@@ -1,50 +1,49 @@
 module.exports = {
-	content: ['./src/**/*.{js,jsx,ts,tsx}'],
-	theme: {
-		extend: {
-			colors: {
-				black: '#333',
-				karry: {
-					DEFAULT: '#FFE8D2',
-					50: '#FFFFFF',
-					100: '#FFFFFF',
-					200: '#FFFFFF',
-					300: '#FFFFFF',
-					400: '#FFFDFB',
-					500: '#FFE8D2',
-					600: '#FFCB9A',
-					700: '#FFAF62',
-					800: '#FF922A',
-					900: '#F17600',
-				},
-				sandal: {
-					DEFAULT: '#A48465',
-					50: '#E8E0D8',
-					100: '#E1D6CC',
-					200: '#D1C1B2',
-					300: '#C2AD98',
-					400: '#B3987F',
-					500: '#A48465',
-					600: '#83684E',
-					700: '#604C39',
-					800: '#3D3024',
-					900: '#1A140F',
-				},
-				paco: {
-					DEFAULT: '#3A160D',
-					50: '#D04F2F',
-					100: '#BF492B',
-					200: '#9E3C23',
-					300: '#7D2F1C',
-					400: '#5B2314',
-					500: '#3A160D',
-					600: '#0C0503',
-					700: '#000000',
-					800: '#000000',
-					900: '#000000',
-				},
-			},
-		},
-	},
-	plugins: [],
+  content: ['./src/**/*.{js,jsx,ts,tsx}'],
+  theme: {
+    extend: {
+      boxShadow: {
+        border: '0 0 1px 1px rgba(255,255,255,0.8)',
+      },
+      backgroundImage: {
+        hero: 'url("assets/images/ui/background.jpg")',
+        logo: 'url("assets/images/ui/logo.png")',
+      },
+      colors: {
+        flesh: {
+          DEFAULT: '#FFCCAA',
+          50: '#FFFFFF',
+          100: '#FFFFFF',
+          200: '#FFFFFF',
+          300: '#FFFDFC',
+          400: '#FFE4D3',
+          500: '#FFCCAA',
+          600: '#FFAA72',
+          700: '#FF893A',
+          800: '#FF6702',
+          900: '#C95000',
+        },
+        'cloud-burst': {
+          DEFAULT: '#253156',
+          50: '#7185C2',
+          100: '#6378BC',
+          200: '#4A62AC',
+          300: '#3E528F',
+          400: '#314173',
+          500: '#253156',
+          600: '#141B2F',
+          700: '#030408',
+          800: '#000000',
+          900: '#000000',
+        },
+      },
+    },
+  },
+  variants: {
+    // all the following default to ['responsive']
+    imageRendering: ['responsive'],
+  },
+  plugins: [
+    require('tailwindcss-image-rendering')(), // no options to configure
+  ],
 };

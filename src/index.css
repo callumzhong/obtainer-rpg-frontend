@@ -1,11 +1,10 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
 
 @layer base {
-	body {
-		background-color: #2e222f;
-		overflow: hidden;
-		color: theme('colors.paco.DEFAULT');
-	}
+  body {
+    /* background-color: #2e222f; */
+    overflow: hidden;
+  }
 }

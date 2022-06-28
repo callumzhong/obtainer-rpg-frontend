@@ -1,8 +1,8 @@
 .camera {
-	position: relative;
-	transform: scale(4.5) translateY(30%);
-	height: 198px;
-	width: 352px;
-	margin: 0 auto;
-	overflow: hidden;
+  position: relative;
+  transform: scale(3) translateY(30%);
+  height: 198px;
+  width: 352px;
+  margin: 0 auto;
+  overflow: hidden;
 }

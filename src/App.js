@@ -1,13 +1,19 @@
-import BlacksmithPage from 'pages/Blacksmith';
-import VillagePage from 'pages/Village';
+import Loading from 'modules/loading/Loading';
+import StartPage from 'pages/Start';
+import { useContext } from 'react';
 import { Route, Routes } from 'react-router-dom';
+import LoadingContext from 'store/loadingContext';
+
 const App = () => {
-	return (
-		<Routes>
-			<Route path='/' element={<BlacksmithPage />} />
-			<Route path='/village' element={<VillagePage />} />
-		</Routes>
-	);
+  const loadingCtx = useContext(LoadingContext);
+  return (
+    <>
+      <Routes>
+        <Route path='/' element={<StartPage />} />
+      </Routes>
+      {loadingCtx.isLoading && <Loading />}
+    </>
+  );
 };
 
 export default App;
