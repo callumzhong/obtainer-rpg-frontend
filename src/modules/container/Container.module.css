@@ -1,18 +1,24 @@
-.border {
+.container {
   border-style: solid;
+  border-image-source: url('assets/images/ui/container.png');
   border-image-repeat: stretch;
-  border-image-slice: 16 fill;
-  border-width: 16px;
+  border-image-slice: 8 fill;
+  border-width: 8px;
+  position: relative;
 }
 
-.top-left-bottom-right {
-  border-image-source: url('assets/images/ui/container-top-left-bottom-right.png');
+.decorate-all {
+  padding: 0.5rem 1rem 0.5rem 1rem;
 }
 
-.top-right-bottom-left {
-  border-image-source: url('assets/images/ui/container-top-right-bottom-left.png');
-}
-
-.top-both-bottom-right {
-  border-image-source: url('assets/images/ui/container-top-both-bottom-right.png');
+.decorate-all::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  background-image: url('assets/images/ui/decorate-top-left.png'),
+    url('assets/images/ui/decorate-top-right.png'),
+    url('assets/images/ui/decorate-bottom-right.png'),
+    url('assets/images/ui/decorate-bottom-left.png');
+  background-repeat: no-repeat;
+  background-position: top left, top right, bottom right, bottom left;
 }

@@ -1,8 +1,8 @@
 import heroImage from 'assets/images/characters/people/hero.png';
 import blacksmithLowerImage from 'assets/images/map/obaiter_v1.png';
-import Conversation from 'components/Conversation/Conversation';
-import FurnaceMessage from 'components/Conversation/FurnaceMessage';
-import FurnaceModal from 'components/FurnaceModal/FurnaceModal';
+import Conversation from 'components/conversation/Conversation';
+import FurnaceMessage from 'components/conversation/FurnaceMessage';
+import FurnaceModal from 'components/furnaceModal/FurnaceModal';
 import GameCanvas from 'components/GameCanvas';
 import emitter, { eventName } from 'emitter';
 import useKeyPressDirectionListener from 'hooks/useKeyPressDirectionListener';

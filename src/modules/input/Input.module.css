@@ -1,20 +1,19 @@
 .input {
   border-style: solid;
   border-image-source: url('assets/images/ui/input.png');
-  border-image-repeat: stretch;
-  border-image-slice: 4 4 4 fill;
+  border-image-slice: 4 4 4 4 fill;
   border-width: 4px 4px 4px 4px;
-  padding-right: 22px;
 }
 
 .input:focus + label {
   position: absolute;
-  top: -4px;
+  inset: -4px -4px -1px -4px;
+  /* top: -4px;
   bottom: -4px;
   right: -4px;
-  left: -4px;
+  left: -4px; */
   border-image-source: url('assets/images/ui/focus.png');
   border-image-repeat: stretch;
-  border-image-slice: 8 fill;
-  border-width: 8px;
+  border-image-slice: 6;
+  border-width: 16px;
 }

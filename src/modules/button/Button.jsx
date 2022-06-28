@@ -2,16 +2,12 @@ import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import styles from './Button.module.css';
 
-const Button = ({ mode, className, onClick, children }) => {
+const Button = ({ className, onClick, children, type='button' }) => {
   return (
     <button
+      type={type}
       onClick={onClick}
-      className={clsx(
-        'inline-block leading-tight rendering-pixelated',
-        styles.border,
-        styles[mode],
-        className,
-      )}
+      className={clsx('inline-block leading-tight rendering-pixelated', styles.button, className)}
     >
       {children}
     </button>
@@ -20,7 +16,6 @@ const Button = ({ mode, className, onClick, children }) => {
 
 Button.propTypes = {
   className: PropTypes.string,
-  onClick: PropTypes.func.isRequired,
   children: PropTypes.any,
 };
 
