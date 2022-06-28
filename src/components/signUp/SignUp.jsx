@@ -1,14 +1,17 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import useSignUpApi from 'apis/useSignUpApi';
+import clsx from 'clsx';
 import FormItem from 'components/formItem/FormItem';
 import Button from 'modules/button/Button';
+import ErrorMessage from 'modules/errorMessage/ErrorMessage';
 import { useForm } from 'react-hook-form';
+import { AiOutlineLoading } from 'react-icons/ai';
 import { BsKey, BsPerson } from 'react-icons/bs';
 import { GoMail } from 'react-icons/go';
 import schema from './schema';
 
 const SignUp = ({ handleIsSignUp }) => {
-  const { handleSignUp } = useSignUpApi();
+  const { handleSignUp, isLoading, error } = useSignUpApi();
   const {
     register,
     handleSubmit,
@@ -59,9 +62,20 @@ const SignUp = ({ handleIsSignUp }) => {
         error={errors.confirmPassword?.message}
         {...register('confirmPassword')}
       />
-      <div className='mt-8 flex justify-around gap-3 pl-10'>
+      <ErrorMessage className='text-center text-base'>{error}</ErrorMessage>
+      <div
+        className={clsx('flex justify-around gap-3', {
+          'mt-10': !error,
+          'mt-4': error,
+        })}
+      >
         <Button type='submit' className='w-full'>
-          提交
+          <div className='relative inline-block'>
+            提交
+            {isLoading && (
+              <AiOutlineLoading className='absolute top-0 -right-5 h-4 w-auto animate-spin text-black text-opacity-70' />
+            )}
+          </div>
         </Button>
         <Button onClick={onClick} className='w-full'>
           返回

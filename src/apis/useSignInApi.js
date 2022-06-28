@@ -1,9 +1,11 @@
 import useHttp from 'hooks/useHttp';
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
+import LoadingContext from 'store/loadingContext';
 import * as yup from 'yup';
 
 const useSignInApi = () => {
   const { isLoading, data, error, sendRequest, clear } = useHttp();
+  const loadingCtx = useContext(LoadingContext);
 
   const handleSignIn = (body) => {
     sendRequest(
@@ -23,7 +25,12 @@ const useSignInApi = () => {
       });
   }, [data]);
 
+  // useEffect(() => {
+  //   loadingCtx.setLoading(isLoading);
+  // }, [isLoading, loadingCtx]);
+
   return {
+    isLoading,
     error,
     handleSignIn,
   };

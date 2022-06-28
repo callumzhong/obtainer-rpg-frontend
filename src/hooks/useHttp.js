@@ -49,9 +49,15 @@ const useHttp = () => {
       },
     })
       .then((response) => {
+        if (!response.ok) {
+          return response.text();
+        }
         return response.json();
       })
       .then((responseData) => {
+        if (typeof responseData === 'string') {
+          throw new Error(responseData);
+        }
         dispatchHttp({
           type: 'RESPONSE',
           responseData: responseData,
@@ -59,7 +65,6 @@ const useHttp = () => {
         });
       })
       .catch((error) => {
-        console.log(error);
         dispatchHttp({
           type: 'ERROR',
           errorMessage: error.message,

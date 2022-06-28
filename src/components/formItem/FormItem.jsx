@@ -1,3 +1,4 @@
+import ErrorMessage from 'modules/errorMessage/ErrorMessage';
 import Input from 'modules/input/Input';
 import React from 'react';
 const FormItem = React.forwardRef(
@@ -15,7 +16,7 @@ const FormItem = React.forwardRef(
             {...props}
           />
         </div>
-        <p className='-mt-1 pl-10 text-xs text-red-500'>{error}</p>
+        <ErrorMessage className='-mt-1 pl-10'>{error}</ErrorMessage>
       </>
     );
   },

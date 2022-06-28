@@ -24,6 +24,7 @@ const useSignUpApi = () => {
   }, [data]);
 
   return {
+    isLoading,
     error,
     handleSignUp,
   };
