@@ -1,0 +1,7 @@
+.top {
+  border-style: solid;
+  border-image-source: url('assets/images/ui/top.png');
+  border-image-repeat: stretch;
+  border-image-slice: 8 18 12 8 fill;
+  border-width: 8px 18px 12px 8px;
+}
