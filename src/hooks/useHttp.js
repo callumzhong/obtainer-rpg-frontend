@@ -66,7 +66,6 @@ const useHttp = () => {
           return response.json();
         })
         .then((responseData) => {
-          console.log(responseData);
           dispatchHttp({
             type: 'RESPONSE',
             responseData: responseData,

@@ -44,11 +44,10 @@ const SignIn = ({ handleIsSignUp }) => {
         error={errors.password?.message}
         {...register('password')}
       />
-      <ErrorMessage className='text-center text-base'>{error}</ErrorMessage>
+      <ErrorMessage className='mb-4 text-center text-base'>{error}</ErrorMessage>
       <div
         className={clsx('flex justify-around gap-3', {
-          'mt-10': !error,
-          'mt-4': error,
+          'mt-4': !error,
         })}
       >
         <Button type='submit' className='w-full'>
