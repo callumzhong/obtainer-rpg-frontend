@@ -1,5 +1,5 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import useSignInApi from 'apis/useSignInApi';
+import useSignInApi, { schema } from 'apis/useSignInApi';
 import clsx from 'clsx';
 import FormItem from 'components/formItem/FormItem';
 import Button from 'modules/button/Button';
@@ -7,7 +7,6 @@ import ErrorMessage from 'modules/errorMessage/ErrorMessage';
 import { useForm } from 'react-hook-form';
 import { AiOutlineLoading } from 'react-icons/ai';
 import { BsKey, BsPerson } from 'react-icons/bs';
-import schema from './schema';
 
 const SignIn = ({ handleIsSignUp }) => {
   const { isLoading, handleSignIn, error } = useSignInApi();

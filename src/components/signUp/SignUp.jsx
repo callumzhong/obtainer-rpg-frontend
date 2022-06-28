@@ -1,5 +1,5 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import useSignUpApi from 'apis/useSignUpApi';
+import useSignUpApi, { schema } from 'apis/useSignUpApi';
 import clsx from 'clsx';
 import FormItem from 'components/formItem/FormItem';
 import Button from 'modules/button/Button';
@@ -8,7 +8,6 @@ import { useForm } from 'react-hook-form';
 import { AiOutlineLoading } from 'react-icons/ai';
 import { BsKey, BsPerson } from 'react-icons/bs';
 import { GoMail } from 'react-icons/go';
-import schema from './schema';
 
 const SignUp = ({ handleIsSignUp }) => {
   const { handleSignUp, isLoading, error } = useSignUpApi();
