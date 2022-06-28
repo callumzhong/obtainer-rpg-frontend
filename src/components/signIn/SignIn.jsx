@@ -28,7 +28,6 @@ const SignIn = ({ handleIsSignUp }) => {
   const onClick = () => {
     handleIsSignUp();
   };
-  console.log(error);
   return (
     <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-2'>
       <FormItem

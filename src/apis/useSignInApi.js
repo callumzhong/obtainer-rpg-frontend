@@ -1,33 +1,29 @@
 import useHttp from 'hooks/useHttp';
-import { useContext, useEffect } from 'react';
-import LoadingContext from 'store/loadingContext';
+import { useEffect } from 'react';
 import * as yup from 'yup';
 
 const useSignInApi = () => {
-  const { isLoading, data, error, sendRequest, clear } = useHttp();
-  const loadingCtx = useContext(LoadingContext);
+  const { isLoading, data, error, sendRequest } = useHttp();
 
   const handleSignIn = (body) => {
-    sendRequest(
-      'https://obtainer-api-server.herokuapp.com/api/user/sign_in',
-      'POST',
-      JSON.stringify(body),
-    );
+    sendRequest({
+      url: 'https://obtainer-api-server.herokuapp.com/api/user/sign_in',
+      method: 'POST',
+      body: JSON.stringify(body),
+    });
   };
 
   useEffect(() => {
     yup
-      .object()
+      .object({
+        token: yup.string().required(),
+      })
       .isValid(data)
-      .then((isObject) => {
-        if (!isObject) return;
+      .then((isValid) => {
+        if (!isValid) return;
         localStorage.setItem('AUTHORIZATION', data.token);
       });
   }, [data]);
-
-  // useEffect(() => {
-  //   loadingCtx.setLoading(isLoading);
-  // }, [isLoading, loadingCtx]);
 
   return {
     isLoading,

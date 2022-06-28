@@ -34,52 +34,63 @@ const httpReducer = (curHttpState, action) => {
   }
 };
 
+const getToken = (format) => `${format} ${localStorage.getItem('AUTHORIZATION')}`;
+
+/**
+ * @returns
+ */
 const useHttp = () => {
   const [httpState, dispatchHttp] = useReducer(httpReducer, initialState);
 
   const clear = useCallback(() => dispatchHttp({ type: 'CLEAR' }), []);
 
-  const sendRequest = useCallback((url, method, body, reqExtra, reqIdentifier) => {
-    dispatchHttp({ type: 'SEND', identifier: reqIdentifier });
-    fetch(url, {
-      method: method,
-      body: body,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then((response) => {
-        if (!response.ok) {
-          return response.text();
-        }
-        return response.json();
+  const sendRequest = useCallback(
+    ({ url, method, useToken = false, body, reqExtra, reqIdentifier }) => {
+      const headers = new Headers({ 'Content-Type': 'application/json' });
+
+      if (useToken) {
+        headers.append('Authorization', getToken('Bearer'));
+      }
+
+      dispatchHttp({ type: 'SEND', identifier: reqIdentifier });
+      fetch(url, {
+        method: method,
+        body: body,
+        headers,
       })
-      .then((responseData) => {
-        if (typeof responseData === 'string') {
-          throw new Error(responseData);
-        }
-        dispatchHttp({
-          type: 'RESPONSE',
-          responseData: responseData,
-          extra: reqExtra,
+        .then(async (response) => {
+          if (!response.ok) {
+            const err = await response.text();
+            throw new Error(err);
+          }
+          return response.json();
+        })
+        .then((responseData) => {
+          console.log(responseData);
+          dispatchHttp({
+            type: 'RESPONSE',
+            responseData: responseData,
+            extra: reqExtra,
+          });
+        })
+        .catch((error) => {
+          dispatchHttp({
+            type: 'ERROR',
+            errorMessage: error.message,
+          });
         });
-      })
-      .catch((error) => {
-        dispatchHttp({
-          type: 'ERROR',
-          errorMessage: error.message,
-        });
-      });
-  }, []);
+    },
+    [],
+  );
 
   return {
     isLoading: httpState.loading,
     data: httpState.data,
     error: httpState.error,
-    sendRequest: sendRequest,
+    sendRequest,
     reqExtra: httpState.extra,
     reqIdentifier: httpState.identifier,
-    clear: clear,
+    clear,
   };
 };
 
