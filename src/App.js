@@ -1,17 +1,19 @@
-import Loading from 'modules/loading/Loading';
+import Loading from 'components/loading/Loading';
+import SwitchScene from 'modules/switchScene/SwitchScene';
 import StartPage from 'pages/Start';
 import { useContext } from 'react';
 import { Route, Routes } from 'react-router-dom';
-import LoadingContext from 'store/loadingContext';
+import LoadContext from 'store/loadContext';
 
 const App = () => {
-  const loadingCtx = useContext(LoadingContext);
+  const loadCtx = useContext(LoadContext);
   return (
     <>
       <Routes>
         <Route path='/' element={<StartPage />} />
       </Routes>
-      {loadingCtx.isLoading && <Loading />}
+      {loadCtx.isLoading && <Loading />}
+      {true && <SwitchScene />}
     </>
   );
 };

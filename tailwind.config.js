@@ -37,6 +37,15 @@ module.exports = {
           900: '#000000',
         },
       },
+      keyframes: {
+        fill: {
+          from: { width: '0px' },
+          to: { width: '100%' },
+        },
+      },
+      animation: {
+        fill: 'fill 5s linear',
+      },
     },
   },
   variants: {

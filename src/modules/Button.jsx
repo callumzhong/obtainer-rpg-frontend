@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import styles from './Button.module.css';
 
-const Button = ({ className, onClick, children, type='button' }) => {
+const Button = ({ className, onClick, children, type = 'button' }) => {
   return (
     <button
       type={type}

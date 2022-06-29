@@ -1,7 +1,7 @@
 import SignIn from 'components/signIn/SignIn';
 import SignUp from 'components/signUp/SignUp';
-import Container from 'modules/container/Container';
-import Top from 'modules/top/Top';
+import Container from 'modules/Container';
+import Top from 'modules/Top';
 import { useState } from 'react';
 
 const StartPage = (props) => {
