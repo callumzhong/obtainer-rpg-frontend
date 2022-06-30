@@ -8,7 +8,7 @@
 }
 
 .decorate-all {
-  padding: 0.5rem 1rem 0.5rem 1rem;
+  padding: 1rem;
 }
 
 .decorate-all::before {

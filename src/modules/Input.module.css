@@ -7,11 +7,7 @@
 
 .input:focus + label {
   position: absolute;
-  inset: -4px -4px -1px -4px;
-  /* top: -4px;
-  bottom: -4px;
-  right: -4px;
-  left: -4px; */
+  inset: -4px;
   border-image-source: url('assets/images/ui/focus.png');
   border-image-repeat: stretch;
   border-image-slice: 6;

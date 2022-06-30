@@ -34,7 +34,8 @@ const httpReducer = (curHttpState, action) => {
   }
 };
 
-const getToken = (format) => `${format} ${localStorage.getItem('AUTHORIZATION')}`;
+const getToken = (format) =>
+  `${format} ${localStorage.getItem('authorization')}`;
 
 /**
  * @returns
@@ -53,17 +54,18 @@ const useHttp = () => {
       }
 
       dispatchHttp({ type: 'SEND', identifier: reqIdentifier });
-      fetch(url, {
+      return fetch(url, {
         method: method,
         body: body,
         headers,
       })
         .then(async (response) => {
+          const isJson = response.headers.get('Content-Type').includes('json');
+          const result = isJson ? await response.json() : await response.text();
           if (!response.ok) {
-            const err = await response.text();
-            throw new Error(err);
+            throw new Error(result.message);
           }
-          return response.json();
+          return result;
         })
         .then((responseData) => {
           dispatchHttp({
@@ -71,12 +73,14 @@ const useHttp = () => {
             responseData: responseData,
             extra: reqExtra,
           });
+          return responseData;
         })
         .catch((error) => {
           dispatchHttp({
             type: 'ERROR',
             errorMessage: error.message,
           });
+          throw error;
         });
     },
     [],

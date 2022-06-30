@@ -42,9 +42,14 @@ module.exports = {
           from: { width: '0px' },
           to: { width: '100%' },
         },
+        character: {
+          from: { transform: 'translate3d(0px,0,0)' },
+          to: { transform: 'translate3d(-100%,0,0)' },
+        },
       },
       animation: {
         fill: 'fill 5s linear',
+        character: 'character 1s steps(4) infinite',
       },
     },
   },
