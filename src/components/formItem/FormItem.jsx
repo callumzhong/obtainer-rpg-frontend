@@ -1,5 +1,5 @@
-import ErrorMessage from 'modules/errorMessage/ErrorMessage';
-import Input from 'modules/input/Input';
+import ErrorMessage from 'modules/ErrorMessage';
+import Input from 'modules/Input';
 import React from 'react';
 const FormItem = React.forwardRef(
   ({ IconElement, placeholder, type, onChange, className, error, ...props }, ref) => {

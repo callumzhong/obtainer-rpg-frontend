@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import useKeyPressDownListener from 'hooks/useKeyPressDownListener';
-import Modal from 'modules/modal/Modal';
+import Modal from 'modules/Modal';
 import {
   GiAbdominalArmor,
   GiAmericanShield,

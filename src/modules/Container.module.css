@@ -1,0 +1,24 @@
+.container {
+  border-style: solid;
+  border-image-source: url('assets/images/ui/container.png');
+  border-image-repeat: stretch;
+  border-image-slice: 8 fill;
+  border-width: 8px;
+  position: relative;
+}
+
+.decorate-all {
+  padding: 1rem;
+}
+
+.decorate-all::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  background-image: url('assets/images/ui/decorate-top-left.png'),
+    url('assets/images/ui/decorate-top-right.png'),
+    url('assets/images/ui/decorate-bottom-right.png'),
+    url('assets/images/ui/decorate-bottom-left.png');
+  background-repeat: no-repeat;
+  background-position: top left, top right, bottom right, bottom left;
+}

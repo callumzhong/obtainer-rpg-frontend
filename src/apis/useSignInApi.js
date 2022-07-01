@@ -1,41 +1,48 @@
 import useHttp from 'hooks/useHttp';
-import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
+import { useGetAllRoleApi } from './useRoleApi';
 
 const schema = yup
   .object({
-    account: yup.string().min(4, '至少 4 個字元').max(12, '最多限制12字元').required('必填'),
+    account: yup
+      .string()
+      .min(4, '至少 4 個字元')
+      .max(12, '最多限制12字元')
+      .required('必填'),
     password: yup.string().min(8, '至少 8 個字元').required('必填'),
   })
   .required();
 
 const useSignInApi = () => {
-  const { isLoading, data, error, sendRequest } = useHttp();
+  const { isLoading, error, sendRequest } = useHttp();
+  const { getAllRoleApi } = useGetAllRoleApi();
 
-  const handleSignIn = (body) => {
+  const navigate = useNavigate();
+  const signInApi = async (body) => {
     sendRequest({
-      url: 'https://obtainer-api-server.herokuapp.com/api/user/sign_in',
+      url: `${process.env.REACT_APP_API_SERVER}/api/user/sign_in`,
       method: 'POST',
       body: JSON.stringify(body),
-    });
-  };
-
-  useEffect(() => {
-    yup
-      .object({
-        token: yup.string().required(),
+    })
+      .then((res) => {
+        localStorage.setItem('authorization', res.token);
+        return getAllRoleApi();
       })
-      .isValid(data)
-      .then((isValid) => {
-        if (!isValid) return;
-        localStorage.setItem('AUTHORIZATION', data.token);
-      });
-  }, [data]);
+      .then((res) => {
+        if (Array.isArray(res) && res.length === 0) {
+          navigate('/create-role');
+          return;
+        }
+        navigate('/');
+      })
+      .catch((err) => {});
+  };
 
   return {
     isLoading,
     error,
-    handleSignIn,
+    signInApi,
   };
 };
 

@@ -1,0 +1,15 @@
+.input {
+  border-style: solid;
+  border-image-source: url('assets/images/ui/input.png');
+  border-image-slice: 4 4 4 4 fill;
+  border-width: 4px 4px 4px 4px;
+}
+
+.input:focus + label {
+  position: absolute;
+  inset: -4px;
+  border-image-source: url('assets/images/ui/focus.png');
+  border-image-repeat: stretch;
+  border-image-slice: 6;
+  border-width: 16px;
+}

@@ -1,17 +1,23 @@
-import Loading from 'modules/loading/Loading';
-import StartPage from 'pages/Start';
+import Loading from 'components/loading/Loading';
+import SwitchScene from 'components/switchScene/SwitchScene';
+import HomePage from 'pages/HomePage';
+import RolePage from 'pages/RolePage';
+import StartPage from 'pages/StartPage';
 import { useContext } from 'react';
 import { Route, Routes } from 'react-router-dom';
-import LoadingContext from 'store/loadingContext';
+import LoadContext from 'store/loadContext';
 
 const App = () => {
-  const loadingCtx = useContext(LoadingContext);
+  const loadCtx = useContext(LoadContext);
   return (
     <>
       <Routes>
-        <Route path='/' element={<StartPage />} />
+        <Route path='/' element={<HomePage />} />
+        <Route path='/login' element={<StartPage />} />
+        <Route path='/create-role' element={<RolePage />} />
       </Routes>
-      {loadingCtx.isLoading && <Loading />}
+      {loadCtx.isLoading && <Loading />}
+      {loadCtx.isSwitchScene && <SwitchScene />}
     </>
   );
 };

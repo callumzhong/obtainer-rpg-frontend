@@ -6,8 +6,7 @@ module.exports = {
         border: '0 0 1px 1px rgba(255,255,255,0.8)',
       },
       backgroundImage: {
-        hero: 'url("assets/images/ui/background.jpg")',
-        logo: 'url("assets/images/ui/logo.png")',
+        hero: 'url("assets/images/ui/background_2.jpg")',
       },
       colors: {
         flesh: {
@@ -36,6 +35,20 @@ module.exports = {
           800: '#000000',
           900: '#000000',
         },
+      },
+      keyframes: {
+        fill: {
+          from: { width: '0px' },
+          to: { width: '100%' },
+        },
+        character: {
+          from: { transform: 'translate3d(0px,0,0)' },
+          to: { transform: 'translate3d(-100%,0,0)' },
+        },
+      },
+      animation: {
+        fill: 'fill 5s linear',
+        character: 'character 1s steps(4) infinite',
       },
     },
   },
