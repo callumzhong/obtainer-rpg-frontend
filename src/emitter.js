@@ -1,8 +1,8 @@
 import mitt from 'mitt';
+const emitter = mitt();
 
 export const eventName = {
-	stand: 'PersonStandComplete',
-	walk: 'PersonWalkingComplete',
+  stand: 'PersonStandComplete',
+  walk: 'PersonWalkingComplete',
 };
-const emitter = mitt();
 export default emitter;

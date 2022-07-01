@@ -4,7 +4,7 @@
 
 @layer base {
   body {
-    /* background-color: #2e222f; */
-    overflow: hidden;
+    background-color: black;
+    /* overflow: hidden; */
   }
 }

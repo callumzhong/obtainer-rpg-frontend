@@ -1,24 +1,24 @@
 import clsx from 'clsx';
-import useKeyPressDownListener from 'hooks/useKeyPressDownListener';
+import useKeyPressListener from 'hooks/useKeyPressListener';
 import Modal from 'modules/Modal';
 import {
   GiAbdominalArmor,
   GiAmericanShield,
   GiCrestedHelmet,
-  GiFragmentedSword,
+  GiFragmentedSword
 } from 'react-icons/gi';
 import ReactModal from 'react-modal';
 
 ReactModal.setAppElement('#root');
 
 const FurnaceModal = ({ event, modalIsOpen, openModal, closeModal }) => {
-  useKeyPressDownListener('KeyQ', () => {
+  useKeyPressListener('KeyQ', () => {
     if (event.type !== 'conversation') return;
     openModal();
     event.onComplete();
   });
 
-  useKeyPressDownListener('KeyEsc', () => {
+  useKeyPressListener('KeyEsc', () => {
     if (!modalIsOpen) return;
     closeModal();
   });
