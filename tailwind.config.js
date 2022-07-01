@@ -6,8 +6,7 @@ module.exports = {
         border: '0 0 1px 1px rgba(255,255,255,0.8)',
       },
       backgroundImage: {
-        hero: 'url("assets/images/ui/background.jpg")',
-        logo: 'url("assets/images/ui/logo.png")',
+        hero: 'url("assets/images/ui/background_2.jpg")',
       },
       colors: {
         flesh: {

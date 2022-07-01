@@ -31,15 +31,15 @@ const SignIn = ({ handleIsSignUp }) => {
   };
   return (
     <>
-      <Top className='relative z-10 w-full text-center text-2xl font-bold text-cloud-burst'>
-        歡迎
+      <Top className='relative z-10 w-full py-2 text-center text-2xl font-bold text-cloud-burst'>
+        Welcome
       </Top>
       <Container className='-mt-2 flex-1 py-12' mode='decorate-all'>
         <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-2'>
           <FormItem
             IconElement={<BsPerson className='h-6 w-auto' />}
             type='text'
-            placeholder='帳號'
+            placeholder='請輸入帳號'
             maxLength={12}
             error={errors.account?.message}
             {...register('account')}
@@ -47,7 +47,7 @@ const SignIn = ({ handleIsSignUp }) => {
           <FormItem
             IconElement={<BsKey className='h-6 w-auto' />}
             type='password'
-            placeholder='密碼'
+            placeholder='請輸入密碼'
             error={errors.password?.message}
             {...register('password')}
           />

@@ -1,8 +1,8 @@
 import useHttp from 'hooks/useHttp';
 
-const useCheckAuthApi = () => {
+const useAuthTokenApi = () => {
   const { isLoading, data, error, sendRequest } = useHttp();
-  const checkAuthApi = () =>
+  const authTokenApi = () =>
     sendRequest({
       url: `${process.env.REACT_APP_API_SERVER}/api/user/check_auth`,
       method: 'GET',
@@ -13,8 +13,8 @@ const useCheckAuthApi = () => {
     isLoading,
     error,
     data,
-    checkAuthApi,
+    authTokenApi,
   };
 };
 
-export default useCheckAuthApi;
+export default useAuthTokenApi;

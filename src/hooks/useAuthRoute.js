@@ -1,14 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import useCheckAuthApi from './useCheckAuthApi';
+import useAuthTokenApi from '../apis/useAuthTokenApi';
 
-const { defaults } = require('autoprefixer');
 const { useContext } = require('react');
 const { useEffect } = require('react');
 const { default: LoadContext } = require('store/loadContext');
-const { useGetAllRoleApi } = require('./useRoleApi');
+const { useGetAllRoleApi } = require('../apis/useRoleApi');
 const useAuth = () => {
-  const { checkAuthApi } = useCheckAuthApi();
+  const { authTokenApi } = useAuthTokenApi();
   const { getAllRoleApi, data } = useGetAllRoleApi();
   const loadCtx = useContext(LoadContext);
   const [isLoading, setIsLoading] = useState(false);
@@ -18,7 +17,7 @@ const useAuth = () => {
   useEffect(() => {
     if (isLoading || isDone) return;
     setIsLoading(true);
-    checkAuthApi()
+    authTokenApi()
       .then((_) => {
         return getAllRoleApi();
       })
@@ -36,7 +35,7 @@ const useAuth = () => {
         setIsDone(true);
         setIsLoading(false);
       });
-  }, [getAllRoleApi, checkAuthApi, isDone, navigate, isLoading, loadCtx]);
+  }, [getAllRoleApi, authTokenApi, isDone, navigate, isLoading, loadCtx]);
 
   return { isDone, role: data };
 };

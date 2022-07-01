@@ -1,5 +1,5 @@
-import useAuth from 'apis/useAuth';
 import SwitchScene from 'components/switchScene/SwitchScene';
+import useAuth from 'hooks/useAuthRoute';
 
 const HomePage = () => {
   const { isDone, role } = useAuth();
