@@ -17,8 +17,8 @@ const layerConfig = {
     gameObjects: {
       hero: new Person({
         isPlayerControlled: true,
-        x: withGrid(14),
-        y: withGrid(5),
+        x: withGrid(38),
+        y: withGrid(15),
       }),
     },
     walls: {
