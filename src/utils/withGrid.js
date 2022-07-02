@@ -1,3 +1,3 @@
-const withGrid = (pos) => pos * 16;
+const withGrid = (pos) => pos * 48;
 
 export default withGrid;

@@ -14,7 +14,7 @@ import RoleItem from './RoleItem';
 const pointLimit = 10;
 const characters = {
   character_0:
-    'https://res.cloudinary.com/callumzhong/image/upload/v1656517774/character_0_sdiqob.png',
+    'https://res.cloudinary.com/callumzhong/image/upload/v1656664388/character_0_qgettx.png',
 };
 
 const Role = () => {

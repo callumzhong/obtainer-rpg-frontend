@@ -1,14 +1,15 @@
-import SwitchScene from 'components/switchScene/SwitchScene';
-import useAuth from 'hooks/useAuthRoute';
+import Game from 'components/game/Game';
+import useLayer from 'hooks/useLayer';
+import Camera from 'layouts/Camera';
 
 const HomePage = () => {
-  const { isDone, role } = useAuth();
-  console.log(role);
+  const { isLoading, layer, layerImage } = useLayer();
   return (
-    <>
-      {!isDone && <SwitchScene />}
-      <p>12</p>
-    </>
+    !isLoading && (
+      <Camera>
+        <Game layer={layer} layerImage={layerImage} />
+      </Camera>
+    )
   );
 };
 

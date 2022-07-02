@@ -1,4 +1,5 @@
 const asGridCoord = (x, y) => {
-	return `${x * 16},${y * 16}`;
+  return `${x * 48},${y * 48}`;
 };
+
 export default asGridCoord;

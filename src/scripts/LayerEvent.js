@@ -1,80 +1,87 @@
 import emitter, { eventName } from 'emitter';
 import oppositeDirection from 'utils/oppositeDirection';
 class LayerEvent {
-	constructor({ map, event }) {
-		this.map = map;
-		this.event = event;
-	}
+  constructor({ map, event }) {
+    this.map = map;
+    this.event = event;
+  }
 
-	stand(resolve) {
-		const who = this.map.gameObjects[this.event.who];
-		who.startBehavior(
-			{
-				map: this.map,
-			},
-			{
-				type: 'stand',
-				direction: this.event.direction,
-				time: this.event.time,
-			},
-		);
+  stand(resolve) {
+    const who = this.map.gameObjects[this.event.who];
+    who.startBehavior(
+      {
+        map: this.map,
+      },
+      {
+        type: 'stand',
+        direction: this.event.direction,
+        time: this.event.time,
+      },
+    );
 
-		const completeHandler = (e) => {
-			if (e.whoId === this.event.who) {
-				emitter.off(eventName.stand, completeHandler);
-				resolve();
-			}
-		};
-		emitter.on(eventName.stand, completeHandler);
-	}
+    const completeHandler = (e) => {
+      if (e.whoId === this.event.who) {
+        emitter.off(eventName.stand, completeHandler);
+        resolve();
+      }
+    };
+    emitter.on(eventName.stand, completeHandler);
+  }
 
-	walk(resolve) {
-		const who = this.map.gameObjects[this.event.who];
-		who.startBehavior(
-			{
-				map: this.map,
-			},
-			{
-				type: 'walk',
-				direction: this.event.direction,
-				retry: true,
-			},
-		);
+  walk(resolve) {
+    const who = this.map.gameObjects[this.event.who];
+    who.startBehavior(
+      {
+        map: this.map,
+      },
+      {
+        type: 'walk',
+        direction: this.event.direction,
+        retry: true,
+      },
+    );
 
-		const completeHandler = (e) => {
-			if (e.whoId === this.event.who) {
-				emitter.off(eventName.walk, completeHandler);
-				resolve();
-			}
-		};
-		emitter.on(eventName.walk, completeHandler);
-	}
+    const completeHandler = (e) => {
+      if (e.whoId === this.event.who) {
+        emitter.off(eventName.walk, completeHandler);
+        resolve();
+      }
+    };
+    emitter.on(eventName.walk, completeHandler);
+  }
 
-	conversation(resolve, setEventState) {
-		if (this.event.faceHero) {
-			const obj = this.map.gameObjects[this.event.faceHero];
-			obj.direction = oppositeDirection(this.map.gameObjects['hero'].direction);
-		}
-		setEventState({
-			type: this.event.type,
-			element: this.event.element,
-			onComplete: () => {
-				resolve();
-				setEventState({});
-			},
-		});
-	}
+  conversation(resolve, setEvent) {
+    if (this.event.faceHero) {
+      const obj = this.map.gameObjects[this.event.faceHero];
+      obj.direction = oppositeDirection(this.map.gameObjects['hero'].direction);
+    }
+    setEvent({
+      type: this.event.type,
+      who: this.event.who,
+      onComplete: () => {
+        resolve();
+        setEvent({});
+      },
+    });
+  }
 
-	changeMap(resolve, _, navigate) {
-		navigate(this.event.map, { replace: true });
-		resolve();
-	}
+  changeMap(resolve, setEvent) {
+    setEvent((prevState) => ({
+      ...prevState,
+      type: this.event.type,
+      map: this.event.map,
+      onComplete: () => {
+        resolve();
+        setEvent({});
+      },
+    }));
+  }
 
-	init(setEventState, navigate) {
-		return new Promise((resolve) => {
-			this[this.event.type](resolve, setEventState, navigate);
-		});
-	}
+  init(setEvent) {
+    return new Promise((resolve) => {
+      this[this.event.type](resolve, setEvent);
+    });
+  }
 }
 
 export default LayerEvent;
