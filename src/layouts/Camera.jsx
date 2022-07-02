@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-const Camera = (props) => {
+const Camera = ({ children }) => {
   const [detectHW, setDetectHW] = useState({
     winWidth: window.innerWidth,
     winHeight: window.innerHeight,
@@ -21,14 +21,13 @@ const Camera = (props) => {
     };
   }, [detectHW]);
   return (
-    <div
-      className={`absolute inset-0 m-auto  overflow-hidden`}
-      children={props.children}
-      style={{
-        height: detectHW.winHeight > 1200 ? 'none' : ` ${detectHW.winHeight}px`,
-        width: detectHW.winWidth > 2160 ? 'none' : ` ${detectHW.winWidth}px`,
-      }}
-    />
+    <div className={`absolute inset-0 m-auto overflow-hidden bg-black`}>
+      {React.Children.map(children, (child) =>
+        React.cloneElement(child, {
+          detectHW,
+        }),
+      )}
+    </div>
   );
 };
 

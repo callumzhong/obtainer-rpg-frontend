@@ -88,11 +88,12 @@ class Sprite {
     }
   }
 
-  draw(ctx, middle, cameraPerson) {
+  draw(ctx, middle, cameraPerson, centerPoint) {
     const { width, height, zoom, isLoaded, transformX, transformY } = middle;
     const [frameX, frameY] = this.frame;
-    const x = this.gameObject.x + withGrid(16) - cameraPerson.x;
-    const y = this.gameObject.y + withGrid(7.5) - cameraPerson.y;
+    const x = this.gameObject.x + withGrid(centerPoint.x) - cameraPerson.x;
+    const y = this.gameObject.y + withGrid(centerPoint.y) - cameraPerson.y;
+
     const dWidth = width >= 48 ? width : 48 - width + width;
     const dHeight = height >= 48 ? height : 48 - height + height;
 

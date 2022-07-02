@@ -13,8 +13,8 @@ const Canvas = React.forwardRef((props, ref) => {
   return (
     <canvas
       className='cursor-[inherit] touch-none rendering-pixelated'
-      height={props.height}
-      width={props.width}
+      height={1200}
+      width={2160}
       ref={canvasRef}
     />
   );

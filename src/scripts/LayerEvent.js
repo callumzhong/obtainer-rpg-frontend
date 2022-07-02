@@ -66,14 +66,15 @@ class LayerEvent {
   }
 
   changeMap(resolve, setEvent) {
-    setEvent({
+    setEvent((prevState) => ({
+      ...prevState,
       type: this.event.type,
-      text: this.event.map,
+      map: this.event.map,
       onComplete: () => {
         resolve();
         setEvent({});
       },
-    });
+    }));
   }
 
   init(setEvent) {

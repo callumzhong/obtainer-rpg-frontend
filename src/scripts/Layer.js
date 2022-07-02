@@ -10,21 +10,21 @@ class Layer {
     this.isCutscenePlaying = false;
   }
 
-  drawLowerImage(ctx, lower, cameraPerson) {
+  drawLowerImage(ctx, lower, cameraPerson,centerPoint) {
     lower.isLoaded &&
       ctx.drawImage(
         lower.image,
-        withGrid(16) - cameraPerson.x,
-        withGrid(7.5) - cameraPerson.y,
+        withGrid(centerPoint.x) - cameraPerson.x,
+        withGrid(centerPoint.y) - cameraPerson.y,
       );
   }
 
-  drawUpperImage(ctx, upper, cameraPerson) {
+  drawUpperImage(ctx, upper, cameraPerson,centerPoint) {
     upper.isLoaded &&
       ctx.drawImage(
         upper.image,
-        withGrid(16) - cameraPerson.x,
-        withGrid(7.5) - cameraPerson.y,
+        withGrid(centerPoint.x) - cameraPerson.x,
+        withGrid(centerPoint.y) - cameraPerson.y,
       );
   }
 
