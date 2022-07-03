@@ -1,62 +1,28 @@
-import character_0_action from 'assets/images/characters/people/character_0_action.png';
-import map003 from 'assets/images/map/Map003.png';
+import { character, layerImages, layers } from 'data/config';
 import emitter, { eventName } from 'emitter';
 import useKeyPressDirectionListener from 'hooks/useKeyPressDirectionListener';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import Layer from 'scripts/Layer';
 import LayerImage from 'scripts/LayerImage';
-import Person from 'scripts/Person';
-import withGrid from 'utils/withGrid';
+import LoadContext from 'store/loadContext';
+import isEmptyObject from 'utils/isEmptyObject';
 import useAuthRoute from './useAuthRoute';
 import useKeyPressListener from './useKeyPressListener';
 import useRequestAnimationFrame from './useRequestAnimationFrame';
 
-import HOME_WALLS from 'constants/homeWalls.json';
-import asGridCoord from 'utils/asGridCoord';
-const layerConfig = {
-  home: {
-    gameObjects: {
-      hero: new Person({
-        isPlayerControlled: true,
-        x: withGrid(7),
-        y: withGrid(20),
-      }),
-    },
-    walls: {
-      ...HOME_WALLS,
-    },
-    cutsceneSpaces: {
-      [asGridCoord(7, 21)]: [
-        {
-          events: [{ type: 'changeMap', map: 'town' }],
-        },
-      ],
-    },
-  },
-  town: {
-    gameObjects: {
-      hero: new Person({
-        isPlayerControlled: true,
-        x: withGrid(37),
-        y: withGrid(15),
-      }),
-    },
-    walls: {
-      ...HOME_WALLS,
-    },
-    cutsceneSpaces: {
-      [asGridCoord(39, 15)]: [
-        {
-          events: [{ type: 'changeMap', map: 'home' }],
-        },
-      ],
-    },
-  },
-};
+const defaultLayer = 'town';
+const cloneCharacter = (source, update) =>
+  Object.keys(source).reduce(
+    (obj, key) => ({
+      [key]: { ...source[key], ...update[key] },
+      ...obj,
+    }),
+    {},
+  );
 
 const useLayer = () => {
-  const { isLoading, hero } = useAuthRoute();
-  const [isDown, setIsDown] = useState(false);
+  const { isSwitchScene, setSwitchScene } = useContext(LoadContext);
+  const { hero } = useAuthRoute();
   const [layer, setLayer] = useState({});
   const [layerImage, setLayerImage] = useState({});
   const directions = useKeyPressDirectionListener();
@@ -66,37 +32,36 @@ const useLayer = () => {
     map: '',
     onComplete: () => {},
   });
+
+  const isEmptyObjectByLayer = useMemo(() => isEmptyObject(layer), [layer]);
+
+  const updateLayer = useCallback((layer, layerImage) => {
+    setLayer(
+      new Layer({
+        walls: { ...layer.walls },
+        ...layer,
+      }),
+    );
+    setLayerImage(new LayerImage(layerImage));
+  }, []);
+
   const init = useCallback(() => {
-    if (isLoading || isDown) {
-      return;
-    }
-    if (Array.isArray(hero) && hero.length > 0) {
-      setLayer(new Layer(layerConfig.home));
-      setLayerImage(
-        new LayerImage({
-          lowerSrc: map003,
-          gameObjects: {
-            hero: {
-              src: hero[0].url,
-              transformY: -36,
-            },
-            'hero-fight': {
-              src: character_0_action,
-              width: 96,
-              height: 96,
-              transformX: -25,
-              transformY: -36,
-            },
+    if (!hero || !isEmptyObject(layer)) return;
+    updateLayer(layers[defaultLayer], {
+      ...layerImages[defaultLayer],
+      gameObjects: {
+        ...cloneCharacter(character, {
+          hero: {
+            src: hero.url,
           },
         }),
-      );
-      setIsDown(true);
-    }
-  }, [isLoading, isDown, hero]);
+      },
+    });
+  }, [layer, updateLayer, hero]);
 
   const bindHeroPositionCheck = useCallback(
     (e) => {
-      if (Object.keys(layer).length === 0) return;
+      if (isEmptyObject(layer)) return;
       if (e.whoId === 'hero') {
         layer.checkForFootstepCutscene(setEvent);
       }
@@ -104,17 +69,8 @@ const useLayer = () => {
     [layer],
   );
 
-  const bindEvent = useCallback(() => {
-    const { type, map, onComplete } = event;
-    if (!type) return;
-    if (type === 'changeMap') {
-      setLayer(new Layer(layerConfig[map]));
-      onComplete();
-    }
-  }, [event]);
-
   const mountLayer = useCallback(() => {
-    if (Object.keys(layer).length === 0) return;
+    if (isEmptyObject(layer)) return;
     layer.mountObjects(setEvent);
     emitter.on(eventName.walk, bindHeroPositionCheck);
     return () => {
@@ -124,8 +80,7 @@ const useLayer = () => {
 
   const update = useCallback(
     (time) => {
-      if (Object.keys(layer).length === 0) return;
-
+      if (isEmptyObject(layer) || isSwitchScene) return;
       Object.values(layer.gameObjects).forEach((object) => {
         object.update({
           arrow: directions[0],
@@ -133,33 +88,62 @@ const useLayer = () => {
         });
       });
     },
-    [directions, layer],
+    [directions, layer, isSwitchScene],
   );
+
+  const updateEvent = useCallback(() => {
+    const { type, map, text } = event;
+    if (!type) return;
+    if (type === 'changeMap') {
+      setSwitchScene(true);
+      updateLayer(layers[map], {
+        ...layerImages[map],
+        gameObjects: {
+          ...cloneCharacter(character, {
+            hero: {
+              src: hero.url,
+            },
+          }),
+        },
+      });
+      setSwitchScene(false);
+    }
+    if (type === 'textMessage') {
+      alert(text);
+    }
+  }, [event, hero, setSwitchScene, updateLayer]);
+
+  const completeEvent = useCallback(() => {
+    if (isSwitchScene) return;
+    if (!isSwitchScene && !event.type) return;
+    event.onComplete();
+  }, [isSwitchScene, event]);
 
   useKeyPressListener(
     'Space',
     () => {
-      if (Object.keys(layer).length === 0) return;
+      if (isEmptyObject(layer) || isSwitchScene) return;
       layer.gameObjects.hero.setAction('fight');
     },
     () => {
-      if (Object.keys(layer).length === 0) return;
+      if (isEmptyObject(layer) || isSwitchScene) return;
       layer.gameObjects.hero.setAction('');
     },
   );
 
   useKeyPressListener('Enter', () => {
-    if (Object.keys(layer).length === 0) return;
+    if (isEmptyObject(layer) || isSwitchScene) return;
     layer.checkForActionCutscene(setEvent);
   });
 
   useRequestAnimationFrame(update);
   useEffect(init);
   useEffect(mountLayer);
-  useEffect(bindEvent);
+  useEffect(updateEvent);
+  useEffect(completeEvent);
 
   return {
-    isLoading,
+    isLoading: isEmptyObjectByLayer,
     layer,
     layerImage,
   };

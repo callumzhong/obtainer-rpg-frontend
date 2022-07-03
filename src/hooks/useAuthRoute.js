@@ -42,7 +42,7 @@ const useAuthRoute = () => {
     isSwitchScene,
   ]);
 
-  return { isLoading, hero: data };
+  return { isLoading, hero: data ? data[0] : null };
 };
 
 export default useAuthRoute;

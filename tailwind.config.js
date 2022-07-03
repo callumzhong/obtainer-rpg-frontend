@@ -47,7 +47,7 @@ module.exports = {
         },
       },
       animation: {
-        fill: 'fill 5s linear',
+        fill: 'fill 1s linear',
         character: 'character 1s steps(4) infinite',
       },
     },

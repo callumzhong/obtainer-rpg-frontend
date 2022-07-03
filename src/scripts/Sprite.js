@@ -1,3 +1,4 @@
+import shadow from 'assets/images/characters/shadow.png';
 import withGrid from 'utils/withGrid';
 
 class Sprite {
@@ -55,8 +56,18 @@ class Sprite {
     this.currentAnimation = config.currentAnimation || 'idle-down';
     this.currentAnimationFrame = 0;
 
-    this.animationFrameLimit = config.animationFrameLimit || 7;
+    this.animationFrameLimit = config.animationFrameLimit || 6;
     this.animationFrameProgress = this.animationFrameLimit;
+
+    //Shadow
+    this.shadow = new Image();
+    this.useShadow = 'useShadow' in config ? config.useShadow : true;
+    if (this.useShadow) {
+      this.shadow.src = shadow;
+    }
+    this.shadow.onload = () => {
+      this.isShadowLoaded = true;
+    };
 
     //Reference the game object
     this.gameObject = config.gameObject;
@@ -96,6 +107,8 @@ class Sprite {
 
     const dWidth = width >= 48 ? width : 48 - width + width;
     const dHeight = height >= 48 ? height : 48 - height + height;
+
+    this.isShadowLoaded && ctx.drawImage(this.shadow, x, y - 6);
 
     isLoaded &&
       ctx.drawImage(
