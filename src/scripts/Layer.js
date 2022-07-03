@@ -3,14 +3,13 @@ import withGrid from 'utils/withGrid';
 import LayerEvent from './LayerEvent';
 class Layer {
   constructor(config) {
-    this.layerName = null;
     this.gameObjects = config.gameObjects;
     this.cutsceneSpaces = config.cutsceneSpaces || {};
     this.walls = config.walls || {};
     this.isCutscenePlaying = false;
   }
 
-  drawLowerImage(ctx, lower, cameraPerson,centerPoint) {
+  drawLowerImage(ctx, lower, cameraPerson, centerPoint) {
     lower.isLoaded &&
       ctx.drawImage(
         lower.image,
@@ -19,7 +18,7 @@ class Layer {
       );
   }
 
-  drawUpperImage(ctx, upper, cameraPerson,centerPoint) {
+  drawUpperImage(ctx, upper, cameraPerson, centerPoint) {
     upper.isLoaded &&
       ctx.drawImage(
         upper.image,
@@ -61,12 +60,28 @@ class Layer {
 
   checkForActionCutscene(setEvent) {
     const hero = this.gameObjects['hero'];
-    const nextCoords = nextPosition(hero.x, hero.y, hero.direction);
-    const match = Object.values(this.gameObjects).find((object) => {
+    let nextCoords = nextPosition(hero.x, hero.y, hero.direction);
+    let match = Object.values(this.gameObjects).find((object) => {
+      return `${object.x},${object.y}` === `${nextCoords.x},${nextCoords.y}`;
+    });
+
+    if (!this.isCutscenePlaying && match && match.talking.length) {
+      this.startCutscene(match.talking[0].events, setEvent);
+      return;
+    }
+
+    const matchWalls = Object.keys(this.walls).includes(
+      `${nextCoords.x},${nextCoords.y}`,
+    );
+    if (!matchWalls) return;
+
+    nextCoords = nextPosition(nextCoords.x, nextCoords.y, hero.direction);
+    match = Object.values(this.gameObjects).find((object) => {
       return `${object.x},${object.y}` === `${nextCoords.x},${nextCoords.y}`;
     });
     if (!this.isCutscenePlaying && match && match.talking.length) {
       this.startCutscene(match.talking[0].events, setEvent);
+      return;
     }
   }
 

@@ -5,7 +5,11 @@ const Transition = () => {
   return (
     <>
       <div className='absolute top-0 left-0 right-0 z-50 h-[85vh]'>
-        <img className='h-full w-full object-cover' src={transitionScene01} alt='' />
+        <img
+          className='h-full w-full object-cover'
+          src={transitionScene01}
+          alt=''
+        />
       </div>
       <div className='absolute left-0 right-0 bottom-0 z-50 h-[15vh] text-white'>
         <Progress />

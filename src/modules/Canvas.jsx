@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { useImperativeHandle, useRef } from 'react';
-const Canvas = React.forwardRef((props, ref) => {
+const Canvas = React.forwardRef(({ height, width }, ref) => {
   const canvasRef = useRef();
   useImperativeHandle(ref, () => ({
     draw: (draw) => {
@@ -13,8 +13,8 @@ const Canvas = React.forwardRef((props, ref) => {
   return (
     <canvas
       className='cursor-[inherit] touch-none rendering-pixelated'
-      height={1200}
-      width={2160}
+      height={height}
+      width={width}
       ref={canvasRef}
     />
   );

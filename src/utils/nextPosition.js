@@ -1,7 +1,7 @@
 const nextPosition = (initialX, initialY, direction) => {
   let x = initialX;
   let y = initialY;
-  const size = 16;
+  const size = 48;
   if (direction === 'left') {
     x -= size;
   }

@@ -1,18 +1,17 @@
 import useRequestAnimationFrame from 'hooks/useRequestAnimationFrame';
 import Canvas from 'modules/Canvas';
-import { useMemo, useRef } from 'react';
+import React, { useMemo, useRef } from 'react';
 
-const Game = ({ layer, layerImage, detectHW }) => {
+const Game = React.memo(({ layer, layerImage, detectHW }) => {
+  const { winWidth, winHeight } = detectHW;
   const canvasRef = useRef();
   const { lower, upper, gameObjects } = layerImage;
-  console.log(detectHW);
   const centerPoint = useMemo(() => {
-    const { winWidth, winHeight } = detectHW;
     const x = Math.ceil(Math.ceil(winWidth / 48) / 2) - 1;
     const y = Math.ceil(Math.ceil(winHeight / 48) / 2) - 1;
-
     return { x, y };
-  }, [detectHW]);
+  }, [winWidth, winHeight]);
+
   useRequestAnimationFrame((time) => {
     if (Object.keys(layer).length === 0) return;
     const cameraPerson = layer.gameObjects.hero;
@@ -38,8 +37,7 @@ const Game = ({ layer, layerImage, detectHW }) => {
         layer.drawUpperImage(ctx, upper, cameraPerson, centerPoint);
       });
   });
-
-  return <Canvas height='1200' width='2160' ref={canvasRef} />;
-};
+  return <Canvas height={winHeight} width={winWidth} ref={canvasRef} />;
+});
 
 export default Game;
